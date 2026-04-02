@@ -265,6 +265,18 @@ nav a:hover::after {
     gap: 15px;
 }
 
+.nav-status {
+    display: inline-flex;
+    align-items: center;
+    color: var(--green);
+    background: rgba(60,255,0,0.1);
+    border: 1px solid rgba(60,255,0,0.2);
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
 .menu-toggle {
     display: none;
     flex-direction: column;
@@ -483,6 +495,188 @@ nav a:hover::after {
     border-color: var(--green);
     color: var(--green);
     transform: translateY(-3px);
+}
+
+.waitlist-main {
+    padding: 120px 0 90px;
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+}
+
+.waitlist-hero {
+    display: grid;
+    grid-template-columns: 2.4fr 1fr;
+    gap: 30px;
+    align-items: start;
+    margin-top: 40px;
+}
+
+.waitlist-panel,
+.waitlist-details {
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 36px;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
+}
+
+.waitlist-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(60, 255, 0, 0.12);
+    color: var(--green);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 10px 16px;
+    border-radius: 999px;
+    margin-bottom: 24px;
+}
+
+.waitlist-panel h1 {
+    font-size: clamp(2.4rem, 4vw, 3.4rem);
+    margin-bottom: 18px;
+    line-height: 1.05;
+}
+
+.waitlist-panel p {
+    color: rgba(255,255,255,0.78);
+    font-size: 1rem;
+    margin-bottom: 26px;
+    max-width: 680px;
+}
+
+.waitlist-summary-card {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.waitlist-metric {
+    background: linear-gradient(180deg, rgba(40,40,40,0.95), rgba(20,20,20,0.95));
+    border: 1px solid rgba(60,255,0,0.15);
+    padding: 26px;
+    border-radius: 20px;
+    color: #fff;
+}
+
+.waitlist-metric--primary {
+    border-color: rgba(60,255,0,0.35);
+    background: linear-gradient(180deg, rgba(52,52,52,0.96), rgba(20,80,20,0.95));
+}
+
+.metric-label {
+    display: block;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.72);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.waitlist-metric strong {
+    display: block;
+    font-size: 2.5rem;
+    line-height: 1;
+    margin-top: 4px;
+}
+
+.waitlist-status {
+    padding: 22px 24px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    color: rgba(255,255,255,0.88);
+    margin-bottom: 12px;
+    font-size: 1.02rem;
+}
+
+.waitlist-meta {
+    margin-bottom: 18px;
+    color: rgba(255,255,255,0.68);
+    font-size: 0.95rem;
+}
+
+.waitlist-live-badge {
+    display: inline-flex;
+    margin-left: 12px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(60,255,0,0.12);
+    color: var(--green);
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+}
+
+.waitlist-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.waitlist-details h2 {
+    color: #fff;
+    margin-bottom: 18px;
+    font-size: 1.5rem;
+}
+
+.waitlist-details ul {
+    list-style: none;
+    display: grid;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.waitlist-details li {
+    padding-left: 26px;
+    position: relative;
+    color: rgba(255,255,255,0.78);
+}
+
+.waitlist-details li::before {
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    left: 0;
+    top: 2px;
+    color: var(--green);
+    font-size: 0.9rem;
+}
+
+.waitlist-note {
+    background: rgba(60,255,0,0.08);
+    border: 1px solid rgba(60,255,0,0.18);
+    border-radius: 18px;
+    padding: 18px 20px;
+    color: #d6ffcd;
+    font-size: 0.95rem;
+}
+
+@media (max-width: 900px) {
+    .waitlist-hero {
+        grid-template-columns: 1fr;
+    }
+    .waitlist-main {
+        padding-top: 100px;
+    }
+}
+
+@media (max-width: 600px) {
+    .waitlist-panel,
+    .waitlist-details {
+        padding: 28px 20px;
+    }
+
+    .waitlist-summary-card {
+        grid-template-columns: 1fr;
+    }
 }
 
 .secondary-button {

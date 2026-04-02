@@ -2,6 +2,24 @@
 // Flask Backend Configuration
 const API_BASE_URL = window.location.origin; // Use same origin as frontend
 
+function showPopup(type, message, duration = 4200) {
+    const existing = document.querySelector('.toast-message');
+    if (existing) {
+        existing.remove();
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast-message ${type}`;
+    toast.innerHTML = `
+        <span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '⚠' : 'ℹ'}</span>
+        <span>${message}</span>
+    `;
+
+    document.body.appendChild(toast);
+    setTimeout(() => toast.classList.add('hide'), duration - 300);
+    setTimeout(() => toast.remove(), duration);
+}
+
 // Registration is open by default; no launch/waitlist gating
 async function checkLaunchStatus() {
     return true;
@@ -134,7 +152,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             // Validate form
             if (!validateForm(this)) {
-                alert('Please fill in all required fields');
+                showPopup('error', 'Please fill in all required fields');
                 return;
             }
             
@@ -143,14 +161,14 @@ document.addEventListener('DOMContentLoaded', async function() {
             const confirmPassword = document.getElementById('confirm-password').value;
             
             if (password !== confirmPassword) {
-                alert('Passwords do not match');
+                showPopup('error', 'Passwords do not match');
                 return;
             }
             
             // Check if terms are accepted
             const termsAccepted = document.querySelector('input[name="terms"]').checked;
             if (!termsAccepted) {
-                alert('Please accept the Terms of Service and Privacy Policy');
+                showPopup('error', 'Please accept the Terms of Service and Privacy Policy');
                 return;
             }
             
@@ -194,28 +212,26 @@ document.addEventListener('DOMContentLoaded', async function() {
                     localStorage.setItem('currentUser', JSON.stringify(result.user));
                     localStorage.setItem('isLoggedIn', 'true');
                     
-                    // Show success message
-                    alert('✅ Registration successful! You are now on the waitlist and will be notified by email when approved.');
-                    
-                    // Redirect to waitlist page (blocked marketplace until approved)
-                    window.location.href = 'waitlist.html';
+                    // Show success message and redirect
+                    showPopup('success', 'Registration successful! You are now on the waitlist.');
+                    setTimeout(() => window.location.href = 'waitlist.html', 900);
                 } else if (response.status === 202) {
                     // Waitlist pending
                     localStorage.removeItem('authToken');
                     localStorage.removeItem('currentUser');
                     localStorage.setItem('isLoggedIn', 'false');
 
-                    alert(`⏳ You are on the waitlist at position ${result.position || 'unknown'}. You will receive an email once approved.`);
-                    window.location.href = 'waitlist.html';
+                    showPopup('info', `You are on the waitlist at position ${result.position || 'unknown'}. You will receive an email once approved.`);
+                    setTimeout(() => window.location.href = 'waitlist.html', 900);
                 } else {
                     // Error response
-                    alert('❌ Registration failed: ' + (result.error || 'Unknown error'));
+                    showPopup('error', 'Registration failed: ' + (result.error || 'Unknown error'));
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
                 }
             } catch (error) {
                 console.error('Registration error:', error);
-                alert('❌ Cannot connect to server. Please check if Flask backend is running.');
+                showPopup('error', 'Cannot connect to server. Please check if Flask backend is running.');
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalText;
             }
