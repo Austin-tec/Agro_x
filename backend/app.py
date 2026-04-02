@@ -58,15 +58,25 @@ def create_app(config_name='development'):
     # Create tables
     with app.app_context():
         db.create_all()
+        env_allow_registration = os.getenv('ALLOW_REGISTRATION')
+        allow_registration = env_allow_registration.lower() in ('1', 'true', 'yes', 'y') if env_allow_registration is not None else True
+
         # Initialize launch settings if not exists
         if LaunchSettings.query.first() is None:
-            # Default to pre-launch: no registrations until explicitly enabled
+            # Use environment variable to control registration on first deploy.
+            # By default, allow registration so Render deployments do not stay locked in waitlist-only mode.
             launch_settings = LaunchSettings(
                 is_launched=False,
-                allow_registration=False
+                allow_registration=allow_registration
             )
             db.session.add(launch_settings)
             db.session.commit()
+        else:
+            # If an explicit env var is provided, use it to update the current setting.
+            if env_allow_registration is not None:
+                launch_settings = LaunchSettings.query.first()
+                launch_settings.allow_registration = allow_registration
+                db.session.commit()
     
     # ==================== WAITLIST ROUTES ====================
     
