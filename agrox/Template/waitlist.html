@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Waitlist - Agro X</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../css/style.css" />
+</head>
+<body>
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo"><div class="logo-icon"><i class="fas fa-seedling"></i></div><div class="logo-text">Agro<span>X</span></div></a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="marketplace.html">Marketplace</a>
+      </nav>
+      <div class="nav-cta" id="nav-auth-action">
+        <a href="signin.html" class="btn ghost">Sign In</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="waitlist-main">
+    <div class="container">
+      <section class="waitlist-hero">
+        <div class="waitlist-panel">
+          <span class="waitlist-badge">Waitlist access</span>
+          <span class="waitlist-live-badge">Live count</span>
+          <h1>You’re in line for Agro X access</h1>
+          <p>Thank you for joining the waitlist. Your registration request is pending approval and we’ll notify you by email as soon as your account is live.</p>
+
+          <div class="waitlist-summary-card">
+            <article class="waitlist-metric">
+              <span class="metric-label">Total on waitlist</span>
+              <strong id="total-waitlist">0</strong>
+            </article>
+            <article class="waitlist-metric waitlist-metric--primary">
+              <span class="metric-label">Your position</span>
+              <strong id="your-position">--</strong>
+            </article>
+          </div>
+
+          <div id="waitlist-summary" class="waitlist-status">Loading waitlist info...</div>
+          <div class="waitlist-meta">
+            <span id="waitlist-refresh-info">Last updated: --</span>
+          </div>
+          <div class="waitlist-actions">
+            <button id="refresh-waitlist" class="btn outline" type="button">Refresh status</button>
+            <a href="signin.html" class="btn primary" id="waitlist-signin-btn">Sign In</a>
+            <a href="register.html" class="btn outline" id="waitlist-register-btn">Back to Register</a>
+          </div>
+        </div>
+
+        <aside class="waitlist-details">
+          <h2>What happens next</h2>
+          <ul>
+            <li>We review your request and approve accounts as quickly as possible.</li>
+            <li>Watch your inbox for the Agro X approval email.</li>
+            <li>Return here anytime to refresh your waitlist status.</li>
+          </ul>
+          <div class="waitlist-note">
+            <strong>Pro tip:</strong> If you don’t see the email, check your spam folder or add us to your safe senders.
+          </div>
+        </aside>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const API_BASE_URL = window.location.origin;
+
+    function updateWaitlistHeader() {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      const authAction = document.getElementById('nav-auth-action');
+      const signinBtn = document.getElementById('waitlist-signin-btn');
+      const registerBtn = document.getElementById('waitlist-register-btn');
+
+      if (currentUser || isLoggedIn) {
+        if (authAction) {
+          authAction.innerHTML = '<span class="nav-status">Welcome, ' + (currentUser?.first_name || currentUser?.email || 'member') + '</span>';
+        }
+        if (signinBtn) signinBtn.style.display = 'none';
+        if (registerBtn) registerBtn.style.display = 'none';
+      } else {
+        if (authAction) {
+          authAction.innerHTML = '<a href="signin.html" class="btn ghost">Sign In</a>';
+        }
+        if (signinBtn) signinBtn.style.display = '';
+        if (registerBtn) registerBtn.style.display = '';
+      }
+    }
+
+    async function refreshWaitlistData() {
+      try {
+        const statsResp = await fetch(`${API_BASE_URL}/api/waitlist/stats`);
+        const stats = statsResp.ok ? await statsResp.json() : null;
+
+        const userData = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        const userEmail = userData?.email;
+        let userPosition = '--';
+
+        if (userEmail) {
+          const checkResp = await fetch(`${API_BASE_URL}/api/waitlist/check/${encodeURIComponent(userEmail)}`);
+          if (checkResp.ok) {
+            const checkData = await checkResp.json();
+            if (checkData.in_waitlist) {
+              userPosition = checkData.position || '--';
+            }
+          }
+        }
+
+        document.getElementById('total-waitlist').textContent = stats ? stats.total_waitlist || 0 : 'N/A';
+        document.getElementById('your-position').textContent = userPosition;
+
+        let summaryText = 'Everyone is currently in the queue for full AgroX access.';
+        if (userEmail) {
+          summaryText = userPosition === '--' ? `Logged in as ${userEmail}. Waitlist status will show when available.` : `Logged in as ${userEmail}. Your current position is ${userPosition}.`;
+        }
+        document.getElementById('waitlist-summary').textContent = summaryText;
+        const refreshInfo = document.getElementById('waitlist-refresh-info');
+        if (refreshInfo) {
+          refreshInfo.textContent = 'Last updated: ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+      } catch (e) {
+        console.error('Waitlist refresh error', e);
+        document.getElementById('waitlist-summary').textContent = 'Unable to load waitlist data right now. Please try again shortly.';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      updateWaitlistHeader();
+      refreshWaitlistData();
+      document.getElementById('refresh-waitlist')?.addEventListener('click', refreshWaitlistData);
+      setInterval(refreshWaitlistData, 15000);
+    });
+  </script>
+</body>
+</html>

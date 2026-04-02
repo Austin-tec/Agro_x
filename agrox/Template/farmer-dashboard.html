@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Dashboard - AgroTech Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/marketplace.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="container nav-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i class="fas fa-seedling"></i></div>
+                <div class="logo-text">Agro<span>X</span></div>
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="marketplace.html">Marketplace</a>
+                <a href="messages.html">Messages</a>
+                <a href="my-listings.html">My Listings</a>
+            </nav>
+
+            <div class="nav-cta">
+                <div class="notifications">
+                    <button class="notification-btn" id="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notification-badge" style="display: none;">0</span>
+                    </button>
+                    <div class="notification-dropdown" id="notification-dropdown">
+                        <div class="notification-header">
+                            <h4>Notifications</h4>
+                            <button class="mark-all-read" id="mark-all-read">Mark all read</button>
+                        </div>
+                        <div class="notification-list" id="notification-list">
+                            <div class="no-notifications">No new notifications</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-menu">
+                    <button class="user-button">
+                        <i class="fas fa-user"></i>
+                        <span id="user-name">Farmer</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown">
+                        <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="marketplace-container">
+        <div class="container">
+            <!-- Dashboard Header -->
+            <div class="marketplace-header">
+                <div class="marketplace-title">
+                    <h1>Farmer Dashboard</h1>
+                    <p>Manage your listings and handle buyer requests</p>
+                </div>
+            </div>
+            
+            <!-- Dashboard Content -->
+            <div class="marketplace-content">
+                <!-- Sidebar -->
+                <aside class="categories-sidebar">
+                    <div class="sidebar-section">
+                        <h3>Dashboard</h3>
+                        <div class="quick-actions">
+                            <a href="#listings" class="quick-action active">
+                                <i class="fas fa-list"></i>
+                                <span>My Listings</span>
+                            </a>
+                            <a href="#add-listing" class="quick-action">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Listing</span>
+                            </a>
+                            <a href="messages.html" class="quick-action">
+                                <i class="fas fa-envelope"></i>
+                                <span>Messages</span>
+                            </a>
+                            <a href="#analytics" class="quick-action">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Analytics</span>
+                            </a>
+                        </div>
+                    </div>
+                </aside>
+                
+                <!-- Main Content Area -->
+                <section class="listings-grid">
+                    <!-- My Listings Tab -->
+                    <div id="listings-tab" class="tab-content active">
+                        <div class="listings-header">
+                            <h2>My Product Listings</h2>
+                            <button class="btn primary" id="add-listing-btn">
+                                <i class="fas fa-plus"></i> Add New Listing
+                            </button>
+                        </div>
+                        <div id="my-listings-container" class="listings-container grid-view">
+                            <!-- Listings will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Requests Tab -->
+                    <div id="requests-tab" class="tab-content">
+                        <div class="listings-header">
+                            <h2>Buyer Requests</h2>
+                        </div>
+                        <div id="requests-container" class="listings-container">
+                            <!-- Requests will be loaded here -->
+                        </div>
+                    </div>
+                    
+
+                    
+                    <!-- Analytics Tab -->
+                    <div id="analytics-tab" class="tab-content">
+                        <div class="listings-header">
+                            <h2>Analytics & Insights</h2>
+                        </div>
+                        <div class="analytics-container">
+                            <!-- Summary Cards -->
+                            <div class="analytics-grid">
+                                <div class="analytics-card">
+                                    <div class="analytics-icon">
+                                        <i class="fas fa-list"></i>
+                                    </div>
+                                    <div class="analytics-content">
+                                        <h3 id="total-listings">0</h3>
+                                        <p>Total Listings</p>
+                                    </div>
+                                </div>
+                                <div class="analytics-card">
+                                    <div class="analytics-icon">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div class="analytics-content">
+                                        <h3 id="total-requests">0</h3>
+                                        <p>Total Requests</p>
+                                    </div>
+                                </div>
+                                <div class="analytics-card">
+                                    <div class="analytics-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="analytics-content">
+                                        <h3 id="approved-requests">0</h3>
+                                        <p>Approved Requests</p>
+                                    </div>
+                                </div>
+                                <div class="analytics-card">
+                                    <div class="analytics-icon">
+                                        <i class="fas fa-comments"></i>
+                                    </div>
+                                    <div class="analytics-content">
+                                        <h3 id="active-chats">0</h3>
+                                        <p>Active Chats</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Charts and Detailed Analytics -->
+                            <div class="analytics-details">
+                                <div class="analytics-section">
+                                    <h3>Request Status Breakdown</h3>
+                                    <div class="status-breakdown">
+                                        <div class="status-item">
+                                            <span class="status-label">Pending</span>
+                                            <div class="status-bar">
+                                                <div class="status-fill pending" id="pending-bar" style="width: 0%"></div>
+                                            </div>
+                                            <span class="status-count" id="pending-count">0</span>
+                                        </div>
+                                        <div class="status-item">
+                                            <span class="status-label">Approved</span>
+                                            <div class="status-bar">
+                                                <div class="status-fill approved" id="approved-bar" style="width: 0%"></div>
+                                            </div>
+                                            <span class="status-count" id="approved-count">0</span>
+                                        </div>
+                                        <div class="status-item">
+                                            <span class="status-label">Declined</span>
+                                            <div class="status-bar">
+                                                <div class="status-fill declined" id="declined-bar" style="width: 0%"></div>
+                                            </div>
+                                            <span class="status-count" id="declined-count">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="analytics-section">
+                                    <h3>Recent Activity</h3>
+                                    <div class="activity-feed" id="activity-feed">
+                                        <div class="no-activity">No recent activity</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Listing Modal -->
+    <div class="modal-overlay hidden" id="add-listing-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modal-title">Add New Listing</h2>
+                <button class="modal-close" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Progress Indicator -->
+                <div class="form-progress">
+                    <div class="progress-step active" data-step="1">
+                        <div class="step-circle">1</div>
+                        <span class="step-label">Basic Info</span>
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <div class="step-circle">2</div>
+                        <span class="step-label">Pricing</span>
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <div class="step-circle">3</div>
+                        <span class="step-label">Details</span>
+                    </div>
+                    <div class="progress-step" data-step="4">
+                        <div class="step-circle">4</div>
+                        <span class="step-label">Review</span>
+                    </div>
+                </div>
+
+                <form id="listing-form">
+                    <!-- Step 1: Basic Information -->
+                    <div id="step-1" class="form-step active" data-step="1">
+                        <div class="form-section">
+                            <h3>Basic Product Information</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="listing-title">Product Name *</label>
+                                    <input type="text" id="listing-title" placeholder="e.g., Premium Organic Tomatoes" required>
+                                    <small class="form-help">Choose a clear, descriptive name for your product</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="listing-category">Product Category *</label>
+                                    <select id="listing-category" required>
+                                        <option value="">Select Category</option>
+                                        <option value="vegetables">Vegetables</option>
+                                        <option value="fruits">Fruits</option>
+                                        <option value="grains">Grains & Cereals</option>
+                                        <option value="dairy">Dairy Products</option>
+                                        <option value="meat">Meat & Poultry</option>
+                                        <option value="eggs">Eggs</option>
+                                        <option value="honey">Honey & Bee Products</option>
+                                        <option value="herbs">Herbs & Spices</option>
+                                        <option value="nuts">Nuts & Seeds</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="listing-description">Detailed Description *</label>
+                                <textarea id="listing-description" rows="4" placeholder="Describe your product's quality, farming methods, taste, appearance, nutritional value, and any special features..." required></textarea>
+                                <small class="form-help">Be specific and highlight what makes your product unique</small>
+                            </div>
+                        </div>
+                        <div class="step-navigation">
+                            <div></div>
+                            <button type="button" class="nav-btn next">Next: Pricing</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Pricing & Availability -->
+                    <div id="step-2" class="form-step" data-step="2">
+                        <div class="form-section">
+                            <h3>Pricing & Availability</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="listing-price">Price *</label>
+                                    <div class="price-input">
+                                        <input type="number" id="listing-price" step="0.01" min="0.01" placeholder="0.00" required>
+                                        <select id="price-unit" class="price-unit-select" required>
+                                            <option value="">per</option>
+                                            <option value="kg">$ per kg</option>
+                                            <option value="lb">$ per lb</option>
+                                            <option value="ton">$ per ton</option>
+                                            <option value="bag">$ per bag</option>
+                                            <option value="piece">$ per piece</option>
+                                            <option value="crate">$ per crate</option>
+                                            <option value="box">$ per box</option>
+                                        </select>
+                                    </div>
+                                    <small class="form-help">Set a competitive price based on market rates</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="listing-unit">Unit of Measurement *</label>
+                                    <select id="listing-unit" required>
+                                        <option value="">Select Unit</option>
+                                        <option value="kg">Kilogram (kg)</option>
+                                        <option value="lb">Pound (lb)</option>
+                                        <option value="ton">Ton</option>
+                                        <option value="bag">Bag (25kg)</option>
+                                        <option value="sack">Sack (50kg)</option>
+                                        <option value="crate">Crate</option>
+                                        <option value="box">Box</option>
+                                        <option value="piece">Piece</option>
+                                        <option value="dozen">Dozen</option>
+                                        <option value="liter">Liter</option>
+                                        <option value="gallon">Gallon</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="listing-quantity">Available Quantity *</label>
+                                    <input type="number" id="listing-quantity" min="1" placeholder="100" required>
+                                    <small class="form-help">Total quantity available for sale</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="listing-min-order">Minimum Order Quantity</label>
+                                    <input type="number" id="listing-min-order" min="1" placeholder="Optional - leave empty if none">
+                                    <small class="form-help">Smallest order you'll accept</small>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="listing-stock-status">Stock Status</label>
+                                <select id="listing-stock-status">
+                                    <option value="available">Available Now</option>
+                                    <option value="limited">Limited Stock</option>
+                                    <option value="seasonal">Seasonal Product</option>
+                                    <option value="pre-order">Available for Pre-order</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="step-navigation">
+                            <button type="button" class="nav-btn prev">Back</button>
+                            <button type="button" class="nav-btn next">Next: Details</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Location & Quality Details -->
+                    <div id="step-3" class="form-step" data-step="3">
+                        <div class="form-section">
+                            <h3>Location & Quality Details</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="listing-location">Farm/Storage Location *</label>
+                                    <input type="text" id="listing-location" placeholder="e.g., Northern Region, Green Valley Farm" required>
+                                    <small class="form-help">Help buyers locate your product</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="listing-delivery">Delivery Options</label>
+                                    <select id="listing-delivery">
+                                        <option value="pickup">Pickup Only</option>
+                                        <option value="local">Local Delivery (+fee)</option>
+                                        <option value="regional">Regional Delivery (+fee)</option>
+                                        <option value="national">National Shipping (+fee)</option>
+                                        <option value="international">International Shipping (+fee)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="listing-harvest-date">Harvest/Packaging Date</label>
+                                    <input type="date" id="listing-harvest-date">
+                                    <small class="form-help">When was this product harvested/packaged?</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="listing-expiry-date">Best Before/Shelf Life</label>
+                                    <input type="date" id="listing-expiry-date">
+                                    <small class="form-help">When should this product be consumed by?</small>
+                                </div>
+                            </div>
+
+                            <!-- Quality Certifications -->
+                            <div class="form-section">
+                                <h4>Quality Certifications & Standards</h4>
+                                <div class="certifications-grid">
+                                    <label class="certification-item">
+                                        <input type="checkbox" name="certifications" value="organic">
+                                        <span class="cert-icon">🌱</span>
+                                        <span class="cert-text">Organic Certified</span>
+                                    </label>
+                                    <label class="certification-item">
+                                        <input type="checkbox" name="certifications" value="non-gmo">
+                                        <span class="cert-icon">🚫</span>
+                                        <span class="cert-text">Non-GMO</span>
+                                    </label>
+                                    <label class="certification-item">
+                                        <input type="checkbox" name="certifications" value="fair-trade">
+                                        <span class="cert-icon">🤝</span>
+                                        <span class="cert-text">Fair Trade</span>
+                                    </label>
+                                    <label class="certification-item">
+                                        <input type="checkbox" name="certifications" value="halal">
+                                        <span class="cert-icon">☪️</span>
+                                        <span class="cert-text">Halal Certified</span>
+                                    </label>
+                                    <label class="certification-item">
+                                        <input type="checkbox" name="certifications" value="kosher">
+                                        <span class="cert-icon">✡️</span>
+                                        <span class="cert-text">Kosher Certified</span>
+                                    </label>
+                                    <label class="certification-item">
+                                        <input type="checkbox" name="certifications" value="gap">
+                                        <span class="cert-icon">✅</span>
+                                        <span class="cert-text">GAP Certified</span>
+                                    </label>
+                                    <label class="certification-item">
+                                        <input type="checkbox" name="certifications" value="local">
+                                        <span class="cert-icon">🏠</span>
+                                        <span class="cert-text">Locally Sourced</span>
+                                    </label>
+                                    <label class="certification-item">
+                                        <input type="checkbox" name="certifications" value="sustainable">
+                                        <span class="cert-icon">🌍</span>
+                                        <span class="cert-text">Sustainable Farming</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-navigation">
+                            <button type="button" class="nav-btn prev">Back</button>
+                            <button type="button" class="nav-btn next">Next: Review</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Review & Submit -->
+                    <div id="step-4" class="form-step" data-step="4">
+                        <div class="form-section">
+                            <h3>Review Your Listing</h3>
+                            <div class="listing-preview">
+                                <div class="preview-header">
+                                    <h4>Listing Preview</h4>
+                                    <span class="preview-badge">Draft</span>
+                                </div>
+                                <div class="preview-content">
+                                    <div class="preview-row">
+                                        <strong>Product:</strong> <span id="preview-title">-</span>
+                                    </div>
+                                    <div class="preview-row">
+                                        <strong>Category:</strong> <span id="preview-category">-</span>
+                                    </div>
+                                    <div class="preview-row">
+                                        <strong>Price:</strong> $<span id="preview-price">-</span> per <span id="preview-unit">-</span>
+                                    </div>
+                                    <div class="preview-row">
+                                        <strong>Quantity:</strong> <span id="preview-quantity">-</span> <span id="preview-unit-qty">-</span>
+                                    </div>
+                                    <div class="preview-row">
+                                        <strong>Location:</strong> <span id="preview-location">-</span>
+                                    </div>
+                                    <div class="preview-row">
+                                        <strong>Description:</strong> <span id="preview-description">-</span>
+                                    </div>
+                                    <div class="preview-row">
+                                        <strong>Certifications:</strong> <span id="preview-certifications">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step-navigation">
+                            <button type="button" class="nav-btn prev">Back</button>
+                            <button type="submit" id="submit-listing-btn" class="btn primary" style="display: none;">
+                                <i class="fas fa-save"></i> Publish Listing
+                            </button>
+                        </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Modal -->
+    <div class="modal-overlay hidden" id="request-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Request Details</h2>
+                <button class="modal-close" id="close-request-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="request-details">
+                    <!-- Request details will be loaded here -->
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn secondary" id="decline-request-btn">Decline</button>
+                    <button type="button" class="btn primary" id="approve-request-btn">Approve & Start Chat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+    <script src="../../js/farmer-dashboard.js"></script>
+</body>
+</html>

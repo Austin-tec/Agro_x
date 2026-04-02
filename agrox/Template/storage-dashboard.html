@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage Dashboard - AgroTech Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/marketplace.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="container nav-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i class="fas fa-seedling"></i></div>
+                <div class="logo-text">Agro<span>Tech</span></div>
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="marketplace.html">Marketplace</a>
+                <a href="messages.html">Messages</a>
+                <a href="#facilities">My Facilities</a>
+            </nav>
+
+            <div class="nav-cta">
+                <div class="notifications">
+                    <button class="notification-btn" id="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notification-badge" style="display: none;">0</span>
+                    </button>
+                    <div class="notification-dropdown" id="notification-dropdown">
+                        <div class="notification-header">
+                            <h4>Notifications</h4>
+                            <button class="mark-all-read" id="mark-all-read">Mark all read</button>
+                        </div>
+                        <div class="notification-list" id="notification-list">
+                            <div class="no-notifications">No new notifications</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-menu">
+                    <button class="user-button">
+                        <i class="fas fa-user"></i>
+                        <span id="user-name">Storage</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown">
+                        <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="marketplace-container">
+        <div class="container">
+            <!-- Dashboard Header -->
+            <div class="marketplace-header">
+                <div class="marketplace-title">
+                    <h1>Storage Dashboard</h1>
+                    <p>Manage your storage facilities and handle customer inquiries</p>
+                </div>
+            </div>
+            
+            <!-- Dashboard Content -->
+            <div class="marketplace-content">
+                <!-- Sidebar -->
+                <aside class="categories-sidebar">
+                    <div class="sidebar-section">
+                        <h3>Dashboard</h3>
+                        <div class="quick-actions">
+                            <a href="#facilities" class="quick-action active">
+                                <i class="fas fa-warehouse"></i>
+                                <span>My Facilities</span>
+                            </a>
+                            <a href="messages.html" class="quick-action">
+                                <i class="fas fa-envelope"></i>
+                                <span>Messages</span>
+                            </a>
+                            <a href="#add-facility" class="quick-action">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Facility</span>
+                            </a>
+                            <a href="#inquiries" class="quick-action">
+                                <i class="fas fa-envelope"></i>
+                                <span>Inquiries</span>
+                            </a>
+                            <a href="#analytics" class="quick-action">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Analytics</span>
+                            </a>
+                        </div>
+                    </div>
+                </aside>
+                
+                <!-- Main Content Area -->
+                <section class="listings-grid">
+                    <!-- My Facilities Tab -->
+                    <div id="facilities-tab" class="tab-content active">
+                        <div class="listings-header">
+                            <h2>My Storage Facilities</h2>
+                            <button class="btn primary" id="add-facility-btn">
+                                <i class="fas fa-plus"></i> Add Facility
+                            </button>
+                        </div>
+                        <div id="facilities-container" class="listings-container grid-view">
+                            <!-- Facilities will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Inquiries Tab -->
+                    <div id="inquiries-tab" class="tab-content">
+                        <div class="listings-header">
+                            <h2>Customer Inquiries</h2>
+                        </div>
+                        <div id="storage-inquiries-container" class="listings-container">
+                            <!-- Inquiries will be loaded here -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Facility Modal -->
+    <div class="modal-overlay hidden" id="add-facility-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="facility-modal-title">Add Storage Facility</h2>
+                <button class="modal-close" id="close-facility-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="facility-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="facility-name">Facility Name *</label>
+                            <input type="text" id="facility-name" required placeholder="e.g., Central Cold Storage">
+                        </div>
+                        <div class="form-group">
+                            <label for="facility-type">Storage Type *</label>
+                            <select id="facility-type" required>
+                                <option value="">Select Type</option>
+                                <option value="cold">Cold Storage</option>
+                                <option value="dry">Dry Storage</option>
+                                <option value="silo">Silo Storage</option>
+                                <option value="warehouse">General Warehouse</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="facility-price">Price per Day *</label>
+                            <input type="number" id="facility-price" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="facility-capacity">Capacity (tons)</label>
+                            <input type="number" id="facility-capacity" step="0.1">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="facility-location">Location *</label>
+                            <input type="text" id="facility-location" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="facility-temperature">Temperature Control</label>
+                            <select id="facility-temperature">
+                                <option value="">Select</option>
+                                <option value="refrigerated">Refrigerated (-5°C to 5°C)</option>
+                                <option value="frozen">Frozen (-18°C)</option>
+                                <option value="ambient">Ambient</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="facility-description">Description</label>
+                        <textarea id="facility-description" rows="3" placeholder="Describe your storage facility..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn secondary" id="cancel-facility-btn">Cancel</button>
+                        <button type="submit" class="btn primary">Save Facility</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inquiry Modal -->
+    <div class="modal-overlay hidden" id="storage-inquiry-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Inquiry Details</h2>
+                <button class="modal-close" id="close-storage-inquiry-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="storage-inquiry-details">
+                    <!-- Inquiry details will be loaded here -->
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn primary" id="respond-storage-inquiry-btn">Start Chat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+    <script src="../../js/storage-dashboard.js"></script>
+</body>
+</html>

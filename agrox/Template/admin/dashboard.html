@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AgroX</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: #f5f7fa; }
+        .navbar { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding:15px 0; position:fixed; top:0; width:100%; z-index:100; }
+        .navbar-content { max-width:1400px; margin:0 auto; padding:0 20px; display:flex; justify-content:space-between; align-items:center; }
+        .logo { display:flex; align-items:center; gap:10px; font-size:24px; font-weight:bold; color:#333; }
+        .logo i { color:#667eea; }
+        .nav-actions { display:flex; gap:15px; }
+        .btn { padding:8px 16px; border:none; border-radius:6px; cursor:pointer; font-weight:500; text-decoration:none; display:inline-flex; align-items:center; gap:8px; transition:all 0.3s; }
+        .btn-primary { background:#667eea; color:white; }
+        .btn-primary:hover { background:#5a67d8; }
+        .btn-secondary { background:#e0e0e0; color:#333; }
+        .btn-secondary:hover { background:#d0d0d0; }
+        .btn-danger { background:#e53e3e; color:white; }
+        .btn-danger:hover { background:#c53030; }
+        .btn-sm { padding:4px 8px; font-size:14px; }
+        .main-content { max-width:1400px; margin:80px auto 40px; padding:0 20px; }
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:20px; margin-bottom:30px; }
+        .stat-card { background:white; border-radius:10px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,0.1); display:flex; align-items:center; gap:15px; }
+        .stat-icon { width:50px; height:50px; background:#667eea20; border-radius:10px; display:flex; align-items:center; justify-content:center; color:#667eea; font-size:24px; }
+        .stat-info h3 { font-size:24px; margin-bottom:5px; color:#333; }
+        .stat-info p { color:#666; font-size:14px; }
+        .filters-section { background:white; border-radius:10px; padding:20px; margin-bottom:30px; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+        .filter-form { display:flex; gap:20px; flex-wrap:wrap; align-items:flex-end; }
+        .filter-group { flex:1; min-width:200px; }
+        .filter-group label { display:block; margin-bottom:5px; color:#666; font-weight:500; }
+        .filter-group select, .filter-group input { width:100%; padding:8px 12px; border:2px solid #e0e0e0; border-radius:6px; font-size:14px; }
+        .table-container { background:white; border-radius:10px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,0.1); overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; }
+        th { text-align:left; padding:12px; background:#f7f9fc; color:#333; font-weight:600; border-bottom:2px solid #e0e0e0; }
+        td { padding:12px; border-bottom:1px solid #e0e0e0; color:#666; }
+        tr:hover { background:#f7f9fc; }
+        .status-badge { display:inline-block; padding:4px 8px; border-radius:12px; font-size:12px; font-weight:600; }
+        .status-pending { background:#fef3c7; color:#b45309; }
+        .status-registered { background:#c6f6d5; color:#22543d; }
+        .user-type-badge { background:#667eea20; color:#667eea; padding:2px 6px; border-radius:4px; font-size:12px; font-weight:600; }
+        .actions { display:flex; gap:5px; }
+        .pagination { margin-top:20px; display:flex; justify-content:center; gap:10px; }
+        .pagination a { padding:8px 12px; background:white; border:1px solid #e0e0e0; border-radius:6px; color:#333; text-decoration:none; transition:all 0.3s; }
+        .pagination a:hover, .pagination a.active { background:#667eea; color:white; border-color:#667eea; }
+        .export-section { margin-top:20px; text-align:right; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo"><i class="fas fa-seedling"></i> AgroX Admin</div>
+            <div class="nav-actions">
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="{{ url_for('export_waitlist') }}" class="btn btn-secondary"><i class="fas fa-download"></i> Export CSV</a>
+                <a href="{{ url_for('admin_logout') }}" class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-info"><h3>{{ stats.total }}</h3><p>Total Signups</p></div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-clock"></i></div><div class="stat-info"><h3>{{ stats.pending }}</h3><p>Pending</p></div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-info"><h3>{{ stats.registered }}</h3><p>Converted</p></div></div>
+        </div>
+
+        <div class="filters-section">
+            <h3 style="margin-bottom:15px;">Filter Entries</h3>
+            <form method="GET" class="filter-form">
+                <div class="filter-group">
+                    <label for="status">Status</label>
+                    <select name="status" id="status">
+                        <option value="all" {% if filter_status == 'all' %}selected{% endif %}>All</option>
+                        <option value="pending" {% if filter_status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="registered" {% if filter_status == 'registered' %}selected{% endif %}>Registered</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="search">Search</label>
+                    <input type="text" name="search" id="search" placeholder="Email, name, business..." value="{{ search }}">
+                </div>
+                <div class="filter-group">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Apply</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead><tr><th>ID</th><th>Email</th><th>Name</th><th>Type</th><th>Location</th><th>Business</th><th>Status</th><th>Joined</th><th>Registered</th><th>Actions</th></tr></thead>
+                <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>#{{ entry.id }}</td>
+                    <td>{{ entry.email }}</td>
+                    <td>{{ entry.name or '-' }}</td>
+                    <td>{% if entry.user_type %}<span class="user-type-badge">{{ entry.user_type }}</span>{% else %}-{% endif %}</td>
+                    <td>{{ entry.location or '-' }}</td>
+                    <td>{{ entry.business_name or '-' }}</td>
+                    <td><span class="status-badge status-{{ entry.status }}">{{ entry.status }}</span></td>
+                    <td>{{ entry.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ entry.registered_at.strftime('%Y-%m-%d') if entry.registered_at else '-' }}</td>
+                    <td>
+                        <div class="actions">
+                            <form method="POST" action="{{ url_for('update_entry_status', entry_id=entry.id) }}" style="display:inline;">
+                                <select name="status" onchange="this.form.submit()" class="btn btn-sm btn-secondary">
+                                    <option value="pending" {% if entry.status == 'pending' %}selected{% endif %}>Pending</option>
+                                    <option value="registered" {% if entry.status == 'registered' %}selected{% endif %}>Registered</option>
+                                </select>
+                            </form>
+                            <form method="POST" action="{{ url_for('delete_entry', entry_id=entry.id) }}" style="display:inline;" onsubmit="return confirm('Delete this entry?')">
+                                <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="10" style="text-align:center; padding:40px;"><i class="fas fa-inbox" style="font-size:48px; color:#ccc;"></i><p>No entries found</p></td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% if pagination.pages > 1 %}
+            <div class="pagination">
+                {% if pagination.has_prev %}<a href="{{ url_for('admin_dashboard', page=pagination.prev_num, status=filter_status, search=search) }}"><i class="fas fa-chevron-left"></i></a>{% endif %}
+                {% for p in pagination.iter_pages() %}
+                    {% if p %}<a href="{{ url_for('admin_dashboard', page=p, status=filter_status, search=search) }}" {% if p == pagination.page %}class="active"{% endif %}>{{ p }}</a>{% else %}<span>…</span>{% endif %}
+                {% endfor %}
+                {% if pagination.has_next %}<a href="{{ url_for('admin_dashboard', page=pagination.next_num, status=filter_status, search=search) }}"><i class="fas fa-chevron-right"></i></a>{% endif %}
+            </div>
+            {% endif %}
+            <div class="export-section"><a href="{{ url_for('export_waitlist') }}" class="btn btn-secondary"><i class="fas fa-download"></i> Export All</a></div>
+        </div>
+    </div>
+</body>
+</html>

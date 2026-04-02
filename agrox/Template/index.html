@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agro X Platform - Connecting Farmers to Markets</title>
+
+  <!-- GOOGLE FONT -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* =========================
+       GLOBAL RESET
+    ========================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #000;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* =========================
+       COLOR VARIABLES
+    ========================== */
+    :root {
+      --green: #3cff00;
+      --green-soft: rgba(60, 255, 0, 0.15);
+      --white: #ffffff;
+      --black: #000000;
+      --glass: rgba(255,255,255,0.05);
+      --border-glass: rgba(255,255,255,0.15);
+    }
+
+    /* =========================
+       GLOBAL UTILITIES
+    ========================== */
+    .container {
+      width: 90%;
+      max-width: 1300px;
+      margin: auto;
+    }
+
+    .section {
+      padding: 120px 0;
+      position: relative;
+    }
+
+    .section-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 30px;
+    }
+
+    .section-sub {
+      color: rgba(255,255,255,0.7);
+      max-width: 700px;
+      line-height: 1.7;
+      font-size: 1.05rem;
+    }
+
+    .green {
+      color: var(--green);
+    }
+
+    /* =========================
+       INTRO LOADER
+    ========================== */
+    .intro {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      animation: introFade 1.2s ease forwards;
+      animation-delay: 2.2s;
+    }
+
+    .intro h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: var(--green);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+
+    @keyframes introFade {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    /* =========================
+       SCROLL ANIMATION BASE
+    ========================== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(60px);
+      transition: all 1s ease;
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- INTRO SCREEN -->
+  <div class="intro">
+    <h1>AGRO X</h1>
+  </div>
+
+  <!-- CONTENT START -->
+
+  <!-- =========================
+       NAVBAR
+  ========================== -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-seedling"></i></div>
+        <div class="logo-text">Agro<span>X</span></div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#about">About</a>
+        <a href="#features">Features</a>
+        <a href="#roles">Roles</a>
+        <a href="#how">How It Works</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="nav-cta">
+        <a href="register.html" class="btn primary">Register</a>
+        <a href="signin.html" class="btn ghost">Sign In</a>
+      </div>
+
+      <div class="menu-toggle" id="menuToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </header>
+
+  <style>
+    /* =========================
+       NAVBAR STYLES
+    ========================== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-glass);
+    }
+
+    .nav-inner {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-size: 1.7rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .logo-icon {
+      color: var(--green);
+      font-size: 28px;
+    }
+
+    .logo-text {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .logo-text span {
+      color: var(--green);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.8);
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 0%;
+      height: 2px;
+      background: var(--green);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--green);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-block;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn.primary {
+      background: var(--green);
+      color: #000;
+      box-shadow: 0 0 20px rgba(60,255,0,0.3);
+    }
+
+    .btn.primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 35px rgba(60,255,0,0.6);
+    }
+
+    .btn.ghost {
+      background: transparent;
+      border: 1px solid var(--border-glass);
+      color: #fff;
+    }
+
+    .btn.ghost:hover {
+      border-color: var(--green);
+      color: var(--green);
+      transform: translateY(-3px);
+    }
+
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .menu-toggle span {
+      width: 26px;
+      height: 2px;
+      background: #fff;
+    }
+
+    @media (max-width: 900px) {
+      .nav-links {
+        position: absolute;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        background: #000;
+        flex-direction: column;
+        padding: 30px;
+        display: none;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: flex;
+      }
+    }
+  </style>
+
+  <!-- =========================
+       HERO SECTION
+  ========================== -->
+  <section class="hero section">
+    <div class="hero-bg"></div>
+
+    <div class="container hero-content">
+      <div class="hero-text reveal">
+        <span class="badge">
+          Agriculture • Technology • Trust
+        </span>
+
+        <h1>
+          From <span class="green">Farm</span>  
+          to <span class="green">Market</span>  
+          Without Friction
+        </h1>
+
+        <p>
+          Agro X is a unified agricultural marketplace connecting farmers,
+          buyers, storage providers, and logistics into one transparent,
+          secure, and scalable ecosystem.
+        </p>
+
+        <div class="hero-actions">
+          <a href="register.html" class="btn primary">Join the Ecosystem</a>
+          <a href="#about" class="btn ghost">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- =========================
+     ABOUT SECTION
+========================== -->
+<section id="about" class="section about">
+  <div class="container">
+    <div class="about-header reveal">
+      <span class="badge">About AgroTech</span>
+      <h2 class="section-title">
+        Reinventing <span class="green">Agriculture</span><br>
+        Through Connected Markets
+      </h2>
+      <p class="section-sub">
+        Agro X is built to eliminate inefficiencies in agricultural trade by
+        connecting farmers, buyers, storage providers, and logistics partners
+        inside a single transparent ecosystem.
+      </p>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-card reveal">
+        <h3>Transparency First</h3>
+        <p>
+          Every transaction, delivery, and confirmation is visible and traceable,
+          reducing fraud and improving trust between all participants.
+        </p>
+      </div>
+
+      <div class="about-card reveal">
+        <h3>Farmer-Focused</h3>
+        <p>
+          Farmers control pricing, availability, and sales while accessing buyers,
+          logistics, and storage without middlemen interference.
+        </p>
+      </div>
+
+      <div class="about-card reveal">
+        <h3>Scalable Ecosystem</h3>
+        <p>
+          Designed to grow across regions, crops, and supply chains while maintaining
+          speed, security, and reliability.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* =========================
+     ABOUT STYLES
+  ========================== */
+  .about-header {
+    max-width: 850px;
+    margin-bottom: 80px;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 30px;
+  }
+
+  .about-card {
+    background: var(--glass);
+    border: 1px solid var(--border-glass);
+    padding: 35px;
+    border-radius: 20px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(60,255,0,0.15), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .about-card:hover::before {
+    opacity: 1;
+  }
+
+  .about-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--green);
+  }
+
+  .about-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+  }
+
+  .about-card p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.75);
+  }
+</style>
+
+<!-- =========================
+     FEATURES SECTION
+========================== -->
+<section id="features" class="section features">
+  <div class="container">
+    <div class="reveal">
+      <span class="badge">Platform Features</span>
+      <h2 class="section-title">
+        Everything Needed for<br>
+        <span class="green">Modern Agricultural Trade</span>
+      </h2>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <h4>Verified Participants</h4>
+        <p>
+          All farmers, buyers, and service providers undergo verification to
+          ensure quality, legitimacy, and trust.
+        </p>
+      </div>
+
+      <div class="feature-card reveal">
+        <h4>Escrow-Based Payments</h4>
+        <p>
+          Payments are held securely until goods are delivered and confirmed,
+          protecting both buyers and farmers.
+        </p>
+      </div>
+
+      <div class="feature-card reveal">
+        <h4>Real-Time Tracking</h4>
+        <p>
+          Track goods from farm to storage to delivery with live order status updates.
+        </p>
+      </div>
+
+      <div class="feature-card reveal">
+        <h4>Ratings & Reviews</h4>
+        <p>
+          Performance feedback creates accountability and improves platform quality.
+        </p>
+      </div>
+
+      <div class="feature-card reveal">
+        <h4>Dispute Resolution</h4>
+        <p>
+          Built-in dispute handling ensures fair outcomes when expectations are not met.
+        </p>
+      </div>
+
+      <div class="feature-card reveal">
+        <h4>Analytics Dashboard</h4>
+        <p>
+          Insights into sales, demand, logistics efficiency, and earnings.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* =========================
+     FEATURES STYLES
+  ========================== */
+  .features-grid {
+    margin-top: 80px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+  }
+
+  .feature-card {
+    background: rgba(0,0,0,0.6);
+    border: 1px solid var(--border-glass);
+    padding: 30px;
+    border-radius: 18px;
+    transition: all 0.35s ease;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--green);
+    box-shadow: 0 0 25px rgba(60,255,0,0.15);
+  }
+
+  .feature-card h4 {
+    font-size: 1.15rem;
+    margin-bottom: 12px;
+  }
+
+  .feature-card p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.75);
+  }
+</style>
+
+<!-- =========================
+     STATS SECTION
+========================== -->
+<section class="section stats">
+  <div class="container stats-grid">
+    <div class="stat reveal">
+      <h3><span class="count" data-target="5000">0</span>+</h3>
+      <p>Active Farmers</p>
+    </div>
+
+    <div class="stat reveal">
+      <h3><span class="count" data-target="12000">0</span>+</h3>
+      <p>Transactions Processed</p>
+    </div>
+
+    <div class="stat reveal">
+      <h3><span class="count" data-target="98">0</span>%</h3>
+      <p>Delivery Success Rate</p>
+    </div>
+
+    <div class="stat reveal">
+      <h3><span class="count" data-target="35">0</span>+</h3>
+      <p>Regions Covered</p>
+    </div>
+  </div>
+</section>
+<!-- =========================
+     ROLES SECTION
+========================== -->
+<section id="roles" class="section roles">
+  <div class="container">
+    <div class="reveal">
+      <span class="badge">Who Uses AgroTech</span>
+      <h2 class="section-title">
+        One Platform.<br>
+        <span class="green">Multiple Powerful Roles</span>
+      </h2>
+      <p class="section-sub">
+        Agro X is designed to serve every key participant in the agricultural
+        supply chain, giving each role tools built specifically for their needs.
+      </p>
+    </div>
+
+    <div class="roles-grid">
+      <div class="role-card reveal">
+        <h3>Farmers</h3>
+        <p>
+          List crops, control pricing, manage orders, and access buyers,
+          storage, and logistics without relying on middlemen.
+        </p>
+        <ul>
+          <li>✔ Direct market access</li>
+          <li>✔ Fair pricing control</li>
+          <li>✔ Secure payments</li>
+        </ul>
+      </div>
+
+      <div class="role-card reveal">
+        <h3>Buyers</h3>
+        <p>
+          Discover verified farmers, track product quality, place secure
+          orders, and monitor deliveries in real time.
+        </p>
+        <ul>
+          <li>✔ Verified suppliers</li>
+          <li>✔ Order tracking</li>
+          <li>✔ Escrow protection</li>
+        </ul>
+      </div>
+
+      <div class="role-card reveal">
+        <h3>Logistics & Storage</h3>
+        <p>
+          Offer transport or storage services, receive delivery jobs, and
+          earn through transparent service contracts.
+        </p>
+        <ul>
+          <li>✔ Job assignments</li>
+          <li>✔ Route transparency</li>
+          <li>✔ Reliable payouts</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* =========================
+     ROLES STYLES
+  ========================== */
+  .roles-grid {
+    margin-top: 80px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+  }
+
+  .role-card {
+    background: linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.05),
+      rgba(0,0,0,0.6)
+    );
+    border: 1px solid var(--border-glass);
+    padding: 40px;
+    border-radius: 22px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .role-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at bottom right, rgba(60,255,0,0.2), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .role-card:hover::after {
+    opacity: 1;
+  }
+
+  .role-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--green);
+  }
+
+  .role-card h3 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+  }
+
+  .role-card p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 20px;
+  }
+
+  .role-card ul {
+    list-style: none;
+  }
+
+  .role-card li {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: rgba(255,255,255,0.85);
+  }
+</style>
+
+<!-- =========================
+     HOW IT WORKS
+========================== -->
+<section id="how" class="section how">
+  <div class="container">
+    <div class="reveal">
+      <span class="badge">How AgroTech Works</span>
+      <h2 class="section-title">
+        A Simple Flow.<br>
+        <span class="green">A Powerful Outcome</span>
+      </h2>
+    </div>
+
+    <div class="steps">
+      <div class="step reveal">
+        <span class="step-num">01</span>
+        <h4>List & Verify</h4>
+        <p>
+          Farmers list produce while buyers and service providers complete
+          verification for trust and transparency.
+        </p>
+      </div>
+
+      <div class="step reveal">
+        <span class="step-num">02</span>
+        <h4>Order & Escrow</h4>
+        <p>
+          Buyers place orders and payments are held securely until delivery
+          is confirmed.
+        </p>
+      </div>
+
+      <div class="step reveal">
+        <span class="step-num">03</span>
+        <h4>Store & Transport</h4>
+        <p>
+          Goods move through verified storage facilities and logistics partners
+          with live tracking.
+        </p>
+      </div>
+
+      <div class="step reveal">
+        <span class="step-num">04</span>
+        <h4>Confirm & Release</h4>
+        <p>
+          Buyers confirm delivery and funds are released instantly to farmers
+          and service providers.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* =========================
+     HOW IT WORKS STYLES
+  ========================== */
+  .steps {
+    margin-top: 80px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 30px;
+  }
+
+  .step {
+    background: var(--glass);
+    border: 1px solid var(--border-glass);
+    padding: 30px;
+    border-radius: 18px;
+    transition: all 0.35s ease;
+  }
+
+  .step:hover {
+    transform: translateY(-6px);
+    border-color: var(--green);
+  }
+
+  .step-num {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--green);
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .step h4 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .step p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.75);
+  }
+</style>
+<!-- =========================
+     CALL TO ACTION
+========================== -->
+<section class="section cta">
+  <div class="container">
+    <div class="cta-box reveal">
+      <h2>
+        Build the Future of<br>
+        <span class="green">Agricultural Trade</span>
+      </h2>
+      <p>
+        Join AgroTech today and connect directly with trusted farmers,
+        buyers, and logistics providers — all on one transparent platform.
+      </p>
+      <div class="cta-actions">
+        <a href="register.html" class="btn primary">Get Started</a>
+        <a href="#contact" class="btn outline">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* =========================
+     CTA STYLES
+  ========================== */
+  .cta-box {
+    text-align: center;
+    padding: 80px 40px;
+    border-radius: 30px;
+    background:
+      radial-gradient(circle at top, rgba(60,255,0,0.15), transparent 60%),
+      linear-gradient(to bottom, rgba(255,255,255,0.06), rgba(0,0,0,0.8));
+    border: 1px solid var(--border-glass);
+  }
+
+  .cta-box h2 {
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    margin-bottom: 20px;
+  }
+
+  .cta-box p {
+    max-width: 650px;
+    margin: auto;
+    margin-bottom: 40px;
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.7;
+  }
+
+  .cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .btn.outline {
+    background: transparent;
+    border: 1px solid var(--border-glass);
+    color: #fff;
+  }
+
+  .btn.outline:hover {
+    border-color: var(--green);
+    color: var(--green);
+    transform: translateY(-3px);
+  }
+</style>
+
+<!-- =========================
+     FOOTER
+========================== -->
+<footer id="contact" class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h3>Agro X</h3>
+        <p>
+          A digital agricultural marketplace connecting farmers,
+          buyers, and logistics with trust and transparency.
+        </p>
+      </div>
+
+      <div>
+        <h4>Platform</h4>
+        <a href="#features">Features</a>
+        <a href="#roles">Roles</a>
+        <a href="#how">How It Works</a>
+        <a href="marketplace.html">Marketplace</a>
+      </div>
+
+      <div>
+        <h4>Account</h4>
+        <a href="register.html">Register</a>
+        <a href="sign in.html">Sign In</a>
+      </div>
+
+      <div>
+        <h4>Legal</h4>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      © 2026 Agro X Platform. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<style>
+  /* =========================
+     FOOTER STYLES
+  ========================== */
+  .footer {
+    padding: 80px 0 40px;
+    border-top: 1px solid var(--border-glass);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 40px;
+  }
+
+  .footer h3 {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+  }
+
+  .footer h4 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+  }
+
+  .footer p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .footer a {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.75);
+    transition: color 0.3s ease;
+  }
+
+  .footer a:hover {
+    color: var(--green);
+  }
+
+  .footer-bottom {
+    margin-top: 50px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+  }
+</style>
+
+<!-- =========================
+     BACK TO TOP
+========================== -->
+<button id="topBtn">↑</button>
+
+<style>
+  #topBtn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--green);
+    color: #000;
+    font-size: 1.2rem;
+    border: none;
+    cursor: pointer;
+    display: none;
+    box-shadow: 0 0 20px rgba(60,255,0,0.5);
+  }
+</style>
+
+<!-- =========================
+     JAVASCRIPT
+========================== -->
+<script>
+  /* SCROLL REVEAL */
+  const reveals = document.querySelectorAll('.reveal');
+
+  function revealOnScroll() {
+    reveals.forEach(el => {
+      const top = el.getBoundingClientRect().top;
+      const visible = window.innerHeight - 100;
+      if (top < visible) {
+        el.classList.add('active');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', revealOnScroll);
+  revealOnScroll();
+
+  /* BACK TO TOP */
+  const topBtn = document.getElementById('topBtn');
+
+  window.addEventListener('scroll', () => {
+    topBtn.style.display = window.scrollY > 500 ? 'block' : 'none';
+  });
+
+  topBtn.onclick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+</script>
+
+
+
+<style>
+  /* =========================
+     STATS STYLES
+  ========================== */
+  .stats {
+    background: linear-gradient(
+      to right,
+      rgba(60,255,0,0.08),
+      rgba(0,0,0,0.9)
+    );
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 40px;
+    text-align: center;
+  }
+
+  .stat h3 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+
+  .stat p {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.75);
+  }
+</style>
+
+<script>
+  /* =========================
+     COUNTER ANIMATION
+  ========================== */
+  const counters = document.querySelectorAll('.count');
+  let started = false;
+
+  window.addEventListener('scroll', () => {
+    const statsSection = document.querySelector('.stats');
+    const sectionTop = statsSection.getBoundingClientRect().top;
+
+    if (sectionTop < window.innerHeight && !started) {
+      counters.forEach(counter => {
+        const target = +counter.dataset.target;
+        let count = 0;
+
+        const update = () => {
+          const inc = target / 120;
+          count += inc;
+          if (count < target) {
+            counter.innerText = Math.ceil(count);
+            requestAnimationFrame(update);
+          } else {
+            counter.innerText = target;
+          }
+        };
+        update();
+      });
+      started = true;
+    }
+  });
+</script>
+
+
+  <style>
+    /* =========================
+       HERO STYLES
+    ========================== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(60,255,0,0.15), transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(60,255,0,0.08), transparent 45%);
+      z-index: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 18px;
+      border-radius: 50px;
+      background: var(--glass);
+      border: 1px solid var(--border-glass);
+      margin-bottom: 25px;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .hero-text h1 {
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 25px;
+    }
+
+    .hero-text p {
+      max-width: 600px;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 40px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+  </style>
+
+  <!-- =========================
+       BASIC JS (NAV + SCROLL)
+  ========================== -->
+  <script>
+    const reveal = document.querySelectorAll('.reveal');
+    window.addEventListener('scroll', () => {
+      reveal.forEach(el => {
+        const top = el.getBoundingClientRect().top;
+        if (top < window.innerHeight - 100) {
+          el.classList.add('active');
+        }
+      });
+    });
+
+    const toggle = document.getElementById('menuToggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    toggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>

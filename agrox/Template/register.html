@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Agro X Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/register.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="container nav-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i class="fas fa-seedling"></i></div>
+                <div class="logo-text">Agro<span>X</span></div>
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#about">About</a>
+                <a href="marketplace.html">Marketplace</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+
+            <div class="nav-cta">
+                <a href="signin.html" class="btn ghost">Sign In</a>
+            </div>
+
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="auth-container">
+        <div class="container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h1>Join Agro X Platform</h1>
+                    <p>Create an account to access farming resources, storage, and market connections</p>
+                </div>
+                
+                <div class="user-type-selector">
+                    <h3>Select Your Account Type</h3>
+                    <div class="type-options">
+                        <div class="type-option active" data-type="farmer">
+                            <div class="type-icon">
+                                <i class="fas fa-tractor"></i>
+                            </div>
+                            <h4>Farmer / Producer</h4>
+                            <p>Sell your produce directly to buyers</p>
+                        </div>
+                        
+                        <div class="type-option" data-type="buyer">
+                            <div class="type-icon">
+                                <i class="fas fa-industry"></i>
+                            </div>
+                            <h4>Buyer / Processor</h4>
+                            <p>Purchase farm produce for your business</p>
+                        </div>
+                        
+                        <div class="type-option" data-type="seller">
+                            <div class="type-icon">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <h4>Seller / Trader</h4>
+                            <p>Trade and sell agricultural products</p>
+                        </div>
+                        
+                        <div class="type-option" data-type="storage">
+                            <div class="type-icon">
+                                <i class="fas fa-warehouse"></i>
+                            </div>
+                            <h4>Storage Provider</h4>
+                            <p>Offer storage facilities to farmers</p>
+                        </div>
+                        
+                        <div class="type-option" data-type="logistics">
+                            <div class="type-icon">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <h4>Logistics Provider</h4>
+                            <p>Transport produce from farm to market</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <form id="register-form" class="auth-form">
+                    <input type="hidden" id="user-type" name="user-type" value="farmer">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first-name">First Name</label>
+                            <input type="text" id="first-name" name="first-name" placeholder="Enter your first name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="last-name">Last Name</label>
+                            <input type="text" id="last-name" name="last-name" placeholder="Enter your last name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" placeholder="City, State, Country" required>
+                    </div>
+                    
+                    <div class="form-group business-field hidden">
+                        <label for="business-name">Business Name</label>
+                        <input type="text" id="business-name" name="business-name" placeholder="Enter your business name">
+                    </div>
+                    
+                    <div class="form-group farmer-field">
+                        <label for="farm-size">Farm Size (acres)</label>
+                        <input type="number" id="farm-size" name="farm-size" placeholder="Enter farm size in acres" min="0">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="password-input">
+                                <input type="password" id="password" name="password" placeholder="Create a password" required>
+                                <button type="button" class="toggle-password" id="toggle-password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm Password</label>
+                            <div class="password-input">
+                                <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+                                <button type="button" class="toggle-password" id="toggle-confirm-password">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="password-strength">
+                        <div class="strength-meter">
+                            <div class="strength-bar" id="strength-bar"></div>
+                        </div>
+                        <div class="strength-text" id="strength-text">Password strength</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="terms" required>
+                            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                        </label>
+                        
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="newsletter">
+                            Send me updates about new features and market opportunities
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="cta-button auth-submit">Create Account</button>
+                    
+                    <div class="auth-footer">
+                        <p>Already have an account? <a href="signin.html">Sign In here</a></p>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="registration-benefits">
+                <h2 class="text-center mb-40">Why Join AgroTech?</h2>
+                
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <h3>Better Prices</h3>
+                        <p>Get fair market prices by eliminating middlemen from the supply chain.</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Verified Partners</h3>
+                        <p>Connect with verified buyers, storage providers, and logistics partners.</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Market Insights</h3>
+                        <p>Access real-time market prices and demand trends for informed decisions.</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h3>Secure Transactions</h3>
+                        <p>Safe and secure payment processing with escrow protection for large orders.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="logo">
+                        <div class="logo-icon"><i class="fas fa-seedling"></i></div>
+                        <div class="logo-text">Agro<span>Tech</span></div>
+                    </div>
+                    <p style="margin-top: 20px; color: #ccc;">Connecting farmers directly to markets, reducing waste and increasing profitability for all stakeholders.</p>
+                </div>
+                
+                <div>
+                    <h3>Account Types</h3>
+                    <ul class="footer-links">
+                        <li><a href="register.html?type=farmer">Farmer Registration</a></li>
+                        <li><a href="register.html?type=buyer">Buyer Registration</a></li>
+                        <li><a href="register.html?type=storage">Storage Provider</a></li>
+                        <li><a href="register.html?type=logistics">Logistics Partner</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3>Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Support</a></li>
+                        <li><a href="#">Community Forum</a></li>
+                        <li><a href="#">Platform Guide</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 AgroTech Platform. All rights reserved. | <a href="signin.html" style="color: var(--primary-green);">Sign In</a> | <a href="register.html" style="color: var(--primary-green);">Register</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../js/main.js"></script>
+    <script src="../../js/register.js"></script>
+</body>
+</html>

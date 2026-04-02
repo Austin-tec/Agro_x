@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace - Agro X Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/marketplace.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="container nav-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i class="fas fa-seedling"></i></div>
+                <div class="logo-text">Agro<span>X</span></div>
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="marketplace.html" class="active">Marketplace</a>
+                <a href="storage-dashboard.html">Storage</a>
+                <a href="logistics-dashboard.html">Logistics</a>
+                <a href="index.html#features">Resources</a>
+            </nav>
+
+            <div class="nav-cta">
+                <a href="register.html" class="btn primary">Register</a>
+                <a href="signin.html" class="btn ghost">Sign In</a>
+            </div>
+
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="marketplace-container" data-module="marketplace">
+        <div class="container">
+            <!-- Marketplace Header -->
+            <div class="marketplace-header">
+                <div class="marketplace-title">
+                    <h1>Agricultural Marketplace</h1>
+                    <p>Browse quality farm produce, storage facilities, and logistics services from verified providers</p>
+                </div>
+            </div>
+            
+            <!-- Marketplace Stats -->
+            <div class="marketplace-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-listings">1,245</div>
+                    <div class="stat-label">Active Listings</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-farmers">856</div>
+                    <div class="stat-label">Verified Farmers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-buyers">324</div>
+                    <div class="stat-label">Active Buyers</div>
+                </div>
+            </div>
+            
+            <!-- Filters and Search -->
+            <div class="marketplace-filters">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search for produce, storage, or services...">
+                    <button class="search-button">Search</button>
+                </div>
+                
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label>Category:</label>
+                        <select id="category-filter">
+                            <option value="all">All Categories</option>
+                            <option value="produce">Farm Produce</option>
+                            <option value="storage">Storage Facilities</option>
+                            <option value="logistics">Logistics Services</option>
+                            <option value="inputs">Farming Inputs</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Location:</label>
+                        <select id="location-filter">
+                            <option value="all">All Locations</option>
+                            <option value="north">Northern Region</option>
+                            <option value="south">Southern Region</option>
+                            <option value="east">Eastern Region</option>
+                            <option value="west">Western Region</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>Sort By:</label>
+                        <select id="sort-filter">
+                            <option value="newest">Newest First</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="rating">Highest Rated</option>
+                        </select>
+                    </div>
+                    
+                    <button class="filter-toggle" id="advanced-filter-toggle">
+                        <i class="fas fa-filter"></i> Advanced Filters
+                    </button>
+                </div>
+                
+                <div class="advanced-filters hidden" id="advanced-filters">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Price Range:</label>
+                            <div class="range-inputs">
+                                <input type="number" placeholder="Min" id="price-min">
+                                <span>to</span>
+                                <input type="number" placeholder="Max" id="price-max">
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label>Quantity:</label>
+                            <input type="number" placeholder="Minimum quantity" id="quantity-filter">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label>Harvest Date:</label>
+                            <input type="date" id="harvest-date-filter">
+                        </div>
+                    </div>
+                    
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Certifications:</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label small">
+                                    <input type="checkbox" value="organic"> Organic
+                                </label>
+                                <label class="checkbox-label small">
+                                    <input type="checkbox" value="fairtrade"> Fair Trade
+                                </label>
+                                <label class="checkbox-label small">
+                                    <input type="checkbox" value="local"> Local Produce
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label>Storage Type:</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label small">
+                                    <input type="checkbox" value="cold"> Cold Storage
+                                </label>
+                                <label class="checkbox-label small">
+                                    <input type="checkbox" value="warehouse"> Warehouse
+                                </label>
+                                <label class="checkbox-label small">
+                                    <input type="checkbox" value="silo"> Silo
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button class="secondary-button" id="reset-filters">Reset Filters</button>
+                        <button class="cta-button" id="apply-filters">Apply Filters</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Marketplace Content -->
+            <div class="marketplace-content">
+                <!-- Categories Sidebar -->
+                <aside class="categories-sidebar">
+                    <h3>Categories</h3>
+                    <ul class="category-list">
+                        <li class="active" data-category="all">
+                            <i class="fas fa-list"></i> All Listings
+                            <span class="category-count">1,245</span>
+                        </li>
+                        <li data-category="grains">
+                            <i class="fas fa-seedling"></i> Grains & Cereals
+                            <span class="category-count">324</span>
+                        </li>
+                        <li data-category="vegetables">
+                            <i class="fas fa-carrot"></i> Vegetables
+                            <span class="category-count">287</span>
+                        </li>
+                        <li data-category="fruits">
+                            <i class="fas fa-apple-alt"></i> Fruits
+                            <span class="category-count">198</span>
+                        </li>
+                        <li data-category="dairy">
+                            <i class="fas fa-cheese"></i> Dairy & Livestock
+                            <span class="category-count">156</span>
+                        </li>
+                        <li data-category="storage">
+                            <i class="fas fa-warehouse"></i> Storage Facilities
+                            <span class="category-count">87</span>
+                        </li>
+                        <li data-category="logistics">
+                            <i class="fas fa-truck"></i> Logistics Services
+                            <span class="category-count">45</span>
+                        </li>
+                        <li data-category="inputs">
+                            <i class="fas fa-tractor"></i> Farming Inputs
+                            <span class="category-count">148</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="sidebar-section">
+                        <h3>Quick Actions</h3>
+                        <div class="quick-actions">
+                            <button class="quick-action">
+                                <i class="fas fa-plus-circle"></i> Add Listing
+                            </button>
+                            <button class="quick-action">
+                                <i class="fas fa-bell"></i> Price Alerts
+                            </button>
+                            <button class="quick-action">
+                                <i class="fas fa-heart"></i> Saved Items
+                            </button>
+                            <button class="quick-action">
+                                <i class="fas fa-history"></i> Recent Views
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3>Market Trends</h3>
+                        <div class="trend-item">
+                            <div class="trend-name">Wheat</div>
+                            <div class="trend-price">↑ $245/ton</div>
+                        </div>
+                        <div class="trend-item">
+                            <div class="trend-name">Tomatoes</div>
+                            <div class="trend-price">↓ $1.2/kg</div>
+                        </div>
+                        <div class="trend-item">
+                            <div class="trend-name">Maize</div>
+                            <div class="trend-price">→ $180/ton</div>
+                        </div>
+                        <div class="trend-item">
+                            <div class="trend-name">Potatoes</div>
+                            <div class="trend-price">↑ $0.8/kg</div>
+                        </div>
+                    </div>
+                </aside>
+                
+                <!-- Listings Grid -->
+                <section class="listings-grid">
+                    <div class="listings-header">
+                        <h2>Featured Listings</h2>
+                        <div class="view-toggle">
+                            <button class="view-option active" data-view="grid">
+                                <i class="fas fa-th-large"></i>
+                            </button>
+                            <button class="view-option" data-view="list">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="listings-container grid-view" id="listings-container">
+                        <!-- Listing items will be loaded here dynamically -->
+                    </div>
+                    
+                    <div class="pagination">
+                        <button class="pagination-button" disabled>
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </button>
+                        <div class="page-numbers">
+                            <span class="page-number active">1</span>
+                            <span class="page-number">2</span>
+                            <span class="page-number">3</span>
+                            <span class="page-number">4</span>
+                            <span class="page-number">5</span>
+                        </div>
+                        <button class="pagination-button">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="logo">
+                        <div class="logo-icon"><i class="fas fa-seedling"></i></div>
+                        <div class="logo-text">Agro<span>X</span></div>
+                    </div>
+                    <p style="margin-top: 20px; color: #ccc;">Connecting farmers directly to markets, reducing waste and increasing profitability for all stakeholders.</p>
+                </div>
+                
+                <div>
+                    <h3>Marketplace</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Browse Produce</a></li>
+                        <li><a href="#">Find Storage</a></li>
+                        <li><a href="#">Logistics Services</a></li>
+                        <li><a href="#">Sell on Agro X</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3>Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Seller Guide</a></li>
+                        <li><a href="#">Buyer Protection</a></li>
+                        <li><a href="#">Contact Support</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3>Stay Connected</h3>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <p style="margin-top: 20px; color: #ccc; font-size: 0.9rem;">Subscribe to our newsletter for market updates</p>
+                    <div class="newsletter-form">
+                        <input type="email" placeholder="Your email">
+                        <button type="submit">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 AgroTech Platform. All rights reserved. | <a href="signin.html" style="color: var(--primary-green);">Sign In</a> | <a href="register.html" style="color: var(--primary-green);">Register</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add Listing Modal -->
+    <div class="modal-overlay hidden" id="add-listing-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Add New Listing</h2>
+                <button class="modal-close" id="close-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="listing-form">
+                    <div class="form-step active" id="step-1">
+                        <h3>Listing Type</h3>
+                        <div class="listing-type-options">
+                            <div class="type-option">
+                                <input type="radio" name="listing-type" id="type-produce" value="produce" checked>
+                                <label for="type-produce">
+                                    <i class="fas fa-seedling"></i>
+                                    <span>Farm Produce</span>
+                                </label>
+                            </div>
+                            
+                            <div class="type-option">
+                                <input type="radio" name="listing-type" id="type-storage" value="storage">
+                                <label for="type-storage">
+                                    <i class="fas fa-warehouse"></i>
+                                    <span>Storage Facility</span>
+                                </label>
+                            </div>
+                            
+                            <div class="type-option">
+                                <input type="radio" name="listing-type" id="type-logistics" value="logistics">
+                                <label for="type-logistics">
+                                    <i class="fas fa-truck"></i>
+                                    <span>Logistics Service</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="cta-button next-step" data-next="2">Next</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-step hidden" id="step-2">
+                        <h3>Listing Details</h3>
+                        <div class="form-group">
+                            <label for="listing-title">Title</label>
+                            <input type="text" id="listing-title" placeholder="e.g., Fresh Organic Tomatoes" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="listing-category">Category</label>
+                                <select id="listing-category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="grains">Grains & Cereals</option>
+                                    <option value="vegetables">Vegetables</option>
+                                    <option value="fruits">Fruits</option>
+                                    <option value="dairy">Dairy & Livestock</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="listing-quantity">Quantity</label>
+                                <input type="number" id="listing-quantity" placeholder="e.g., 100" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="listing-unit">Unit</label>
+                                <select id="listing-unit" required>
+                                    <option value="kg">Kilograms (kg)</option>
+                                    <option value="ton">Tons</option>
+                                    <option value="bag">Bags</option>
+                                    <option value="crate">Crates</option>
+                                    <option value="unit">Units</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="listing-price">Price per unit</label>
+                                <input type="number" id="listing-price" placeholder="e.g., 2.5" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="secondary-button prev-step" data-prev="1">Back</button>
+                            <button type="button" class="cta-button next-step" data-next="3">Next</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-step hidden" id="step-3">
+                        <h3>Additional Information</h3>
+                        
+                        <div class="form-group">
+                            <label for="listing-description">Description</label>
+                            <textarea id="listing-description" rows="4" placeholder="Describe your listing in detail..."></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="listing-location">Location</label>
+                            <input type="text" id="listing-location" placeholder="City, State, Country" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="listing-harvest">Harvest Date (if applicable)</label>
+                            <input type="date" id="listing-harvest">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Certifications</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label small">
+                                    <input type="checkbox" value="organic"> Organic
+                                </label>
+                                <label class="checkbox-label small">
+                                    <input type="checkbox" value="fairtrade"> Fair Trade
+                                </label>
+                                <label class="checkbox-label small">
+                                    <input type="checkbox" value="local"> Local Produce
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="secondary-button prev-step" data-prev="2">Back</button>
+                            <button type="submit" class="cta-button">Submit Listing</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Modal -->
+    <div class="modal-overlay hidden" id="request-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Send Request</h2>
+                <button class="modal-close" id="close-request-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="request-product-info">
+                    <!-- Product info will be loaded here -->
+                </div>
+                <form id="send-request-form">
+                    <div class="form-group">
+                        <label for="request-quantity">Requested Quantity *</label>
+                        <input type="number" id="request-quantity" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="request-message">Message (Optional)</label>
+                        <textarea id="request-message" rows="3" placeholder="Tell the seller about your requirements..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn secondary" id="cancel-request-btn">Cancel</button>
+                        <button type="submit" class="btn primary">Send Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+    <script src="../../js/marketplace.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof updateNavForUser === 'function') updateNavForUser();
+            try {
+                const currentUser = (JSON.parse(localStorage.getItem('currentUser') || 'null') || null);
+                const marketplaceTitle = document.querySelector('.marketplace-title h1');
+                if (marketplaceTitle && currentUser && currentUser.name) {
+                    marketplaceTitle.textContent = `Welcome to the Marketplace, ${currentUser.name}!`;
+                }
+            } catch (e) { /* noop */ }
+        });
+    </script>
+</body>
+</html>

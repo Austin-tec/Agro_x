@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Dashboard - Agro X Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/marketplace.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="container nav-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i class="fas fa-seedling"></i></div>
+                <div class="logo-text">Agro<span>X</span></div>
+            </a>
+
+            <nav class="nav-links">
+                <a href="marketplace.html">Marketplace</a>
+                <a href="messages.html">Messages</a>
+                <a href="#bookmarks">Bookmarks</a>
+            </nav>
+
+            <div class="nav-cta">
+                <div class="notifications">
+                    <button class="notification-btn" id="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notification-badge" style="display: none;">0</span>
+                    </button>
+                    <div class="notification-dropdown" id="notification-dropdown">
+                        <div class="notification-header">
+                            <h4>Notifications</h4>
+                            <button class="mark-all-read" id="mark-all-read">Mark all read</button>
+                        </div>
+                        <div class="notification-list" id="notification-list">
+                            <div class="no-notifications">No new notifications</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-menu">
+                    <button class="user-button">
+                        <i class="fas fa-user"></i>
+                        <span id="user-name">Buyer</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown">
+                        <a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="marketplace-container">
+        <div class="container">
+            <!-- Dashboard Header -->
+            <div class="marketplace-header">
+                <div class="marketplace-title">
+                    <h1>Buyer Dashboard</h1>
+                    <p>Browse products, send requests, and manage your purchases</p>
+                </div>
+            </div>
+            
+            <!-- Dashboard Content -->
+            <div class="marketplace-content">
+                <!-- Sidebar -->
+                <aside class="categories-sidebar">
+                    <div class="sidebar-section">
+                        <h3>Dashboard</h3>
+                        <div class="quick-actions">
+                            <a href="#marketplace" class="quick-action active">
+                                <i class="fas fa-store"></i>
+                                <span>Browse Marketplace</span>
+                            </a>
+                            <a href="messages.html" class="quick-action">
+                                <i class="fas fa-envelope"></i>
+                                <span>Messages</span>
+                            </a>
+                            <a href="#bookmarks" class="quick-action">
+                                <i class="fas fa-bookmark"></i>
+                                <span>Bookmarks</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Placeholder -->
+                    <div class="sidebar-section">
+                        <h3>Payments</h3>
+                        <div class="payment-placeholder">
+                            <button class="cta-button disabled" id="pay-now-btn" disabled>
+                                <i class="fas fa-credit-card"></i> Pay Now
+                            </button>
+                            <p class="payment-note">Payments will be available soon</p>
+                        </div>
+                    </div>
+                </aside>
+                
+                <!-- Main Content Area -->
+                <section class="listings-grid">
+                    <!-- Marketplace Tab -->
+                    <div id="marketplace-tab" class="tab-content active">
+                        <div class="listings-header">
+                            <h2>Available Products</h2>
+                        </div>
+                        <div id="marketplace-container" class="listings-container grid-view">
+                            <!-- Marketplace listings will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <!-- My Requests Tab -->
+                    <div id="requests-tab" class="tab-content">
+                        <div class="listings-header">
+                            <h2>My Requests</h2>
+                        </div>
+                        <div id="my-requests-container" class="listings-container">
+                            <!-- Requests will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Bookmarks Tab -->
+                    <div id="bookmarks-tab" class="tab-content">
+                        <div class="listings-header">
+                            <h2>Bookmarked Products</h2>
+                        </div>
+                        <div id="bookmarks-container" class="listings-container grid-view">
+                            <!-- Bookmarks will be loaded here -->
+                        </div>
+                    </div>
+                    
+
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Request Modal -->
+    <div class="modal-overlay hidden" id="request-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Send Request</h2>
+                <button class="modal-close" id="close-request-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="request-product-info">
+                    <!-- Product info will be loaded here -->
+                </div>
+                <form id="send-request-form">
+                    <div class="form-group">
+                        <label for="request-quantity">Requested Quantity *</label>
+                        <input type="number" id="request-quantity" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="request-message">Message (Optional)</label>
+                        <textarea id="request-message" rows="3" placeholder="Tell the seller about your requirements..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn secondary" id="cancel-request-btn">Cancel</button>
+                        <button type="submit" class="btn primary">Send Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="../../js/main.js"></script>
+    <script src="../../js/buyer-dashboard.js"></script>
+</body>
+</html>

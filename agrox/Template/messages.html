@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - AgroTech Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/marketplace.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="container nav-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i class="fas fa-seedling"></i></div>
+                <div class="logo-text">Agro<span>X</span></div>
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="marketplace.html">Marketplace</a>
+                <a href="messages.html" class="active">Messages</a>
+                <a href="storage-dashboard.html">Storage</a>
+                <a href="logistics-dashboard.html">Logistics</a>
+            </nav>
+
+            <div class="nav-cta" id="nav-cta">
+                <a href="register.html" class="btn primary">Register</a>
+                <a href="sign in.html" class="btn ghost">Sign In</a>
+            </div>
+
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="marketplace-container" data-module="messages">
+        <div class="container">
+                <div class="page-header">
+                    <div class="header-actions">
+                        <a href="#" onclick="goBackToDashboard()" class="back-link">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </div>
+                    <h2><i class="fas fa-comments"></i> My Messages</h2>
+                    <p>Communicate with buyers and sellers about your listings</p>
+                </div>
+
+                <!-- Messages Container -->
+                <div class="messages-container">
+                    <div class="messages-sidebar">
+                        <div class="sidebar-header">
+                            <h3>Conversations</h3>
+                            <button class="btn primary new-message-btn">
+                                <i class="fas fa-plus"></i> New Message
+                            </button>
+                        </div>
+
+                        <div class="conversations-list" id="conversations-list">
+                            <!-- Conversations will be loaded here -->
+                        </div>
+                    </div>
+
+                    <div class="messages-main">
+                        <div class="chat-header">
+                            <div id="chat-info">
+                                <h3>Select a conversation to start chatting</h3>
+                                <p>Choose from the list on the left</p>
+                            </div>
+                        </div>
+
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="empty-chat">
+                                <i class="fas fa-comments"></i>
+                                <h3>No conversation selected</h3>
+                                <p>Select a conversation from the sidebar to view messages</p>
+                            </div>
+                        </div>
+
+                        <div class="chat-input" id="chat-input" style="display: none;">
+                            <form id="message-form">
+                                <div class="input-group">
+                                    <input type="text" id="message-text" placeholder="Type your message..." required>
+                                    <button type="submit" class="btn primary">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Message Modal -->
+    <div id="new-message-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Start New Conversation</h2>
+                <button class="modal-close" id="close-new-message">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="new-message-form">
+                    <div class="form-group">
+                        <label for="recipient-select">Select Recipient</label>
+                        <select id="recipient-select" required>
+                            <option value="">Choose a user...</option>
+                            <!-- Recipients will be loaded here -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="initial-message">Message</label>
+                        <textarea id="initial-message" rows="4" placeholder="Write your first message..." required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn secondary" id="cancel-new-message">Cancel</button>
+                        <button type="submit" class="btn primary">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+    <script src="../../js/messages.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof updateNavForUser === 'function') updateNavForUser();
+
+            // goBackToDashboard will route users to their role dashboard
+            window.goBackToDashboard = function() {
+                try {
+                    const user = (JSON.parse(localStorage.getItem('currentUser') || 'null') || null);
+                    const role = (user && user.role || '').toLowerCase();
+                    if (role === 'logistics') return window.location.href = 'logistics-dashboard.html';
+                    if (role === 'storage') return window.location.href = 'storage-dashboard.html';
+                    if (role === 'seller') return window.location.href = 'seller-dashboard.html';
+                    if (role === 'buyer') return window.location.href = 'buyer-dashboard.html';
+                    return window.location.href = 'farmer-dashboard.html';
+                } catch (e) {
+                    window.location.href = 'index.html';
+                }
+            };
+        });
+    </script>
+</body>
+</html>

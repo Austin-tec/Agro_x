@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Agro X Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/signin.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="container nav-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i class="fas fa-seedling"></i></div>
+                <div class="logo-text">Agro<span>X</span></div>
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#about">About</a>
+                <a href="marketplace.html">Marketplace</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+
+            <div class="nav-cta">
+                <a href="register.html" class="btn ghost">Register</a>
+            </div>
+
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="auth-container">
+        <div class="container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h1>Sign In to Agro X</h1>
+                    <p>Access your account to manage your farm produce, storage, and market connections</p>
+                </div>
+                
+                <form id="signin-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-input">
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                            <button type="button" class="toggle-password" id="toggle-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="remember"> Remember me
+                            </label>
+                            <a href="#" class="forgot-password">Forgot Password?</a>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="cta-button auth-submit">Sign In</button>
+                    
+                    <div class="auth-divider">
+                        <span>Or continue with</span>
+                    </div>
+                    
+                    <div class="social-auth">
+                        <button type="button" class="social-button google">
+                            <i class="fab fa-google"></i> Google
+                        </button>
+                        <button type="button" class="social-button facebook">
+                            <i class="fab fa-facebook-f"></i> Facebook
+                        </button>
+                    </div>
+                    
+                    <div class="auth-footer">
+                        <p>Don't have an account? <a href="register.html">Register here</a></p>
+                        <p>Are you a business? <a href="register.html?type=business">Sign up as business</a></p>
+                    </div>
+                    
+                    <!-- Demo Accounts Section -->
+                    <div class="demo-accounts">
+                        <details style="background: rgba(60, 255, 0, 0.08); border: 1px solid rgba(60, 255, 0, 0.2); border-radius: 8px; padding: 15px; margin-top: 20px; cursor: pointer;">
+                            <summary style="color: var(--green); font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-lightbulb"></i> Demo Accounts (For Testing)
+                            </summary>
+                            <div style="margin-top: 15px; color: #999; font-size: 0.9rem;">
+                                <p style="margin-bottom: 12px; color: #aaa;"><strong>Try these accounts with password: 123456</strong></p>
+                                <div style="display: grid; gap: 10px;">
+                                    <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border-left: 3px solid var(--green);">
+                                        <strong style="color: var(--green);">👨‍🌾 Farmer:</strong> farmer@example.com
+                                    </div>
+                                    <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border-left: 3px solid var(--green);">
+                                        <strong style="color: var(--green);">👨‍💼 Buyer:</strong> buyer@example.com
+                                    </div>
+                                    <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border-left: 3px solid var(--green);">
+                                        <strong style="color: var(--green);">🚚 Logistics:</strong> logistics@example.com
+                                    </div>
+                                    <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border-left: 3px solid var(--green);">
+                                        <strong style="color: var(--green);">🏢 Storage:</strong> storage@example.com
+                                    </div>
+                                </div>
+                                <p style="margin-top: 12px; font-size: 0.85rem; color: #777;">These accounts have pre-loaded demo messages, requests, and conversations for testing the full platform experience.</p>
+                            </div>
+                        </details>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="auth-info">
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-tractor"></i>
+                    </div>
+                    <h3>For Farmers</h3>
+                    <p>Access storage facilities, connect with buyers, and get fair prices for your produce.</p>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <h3>For Buyers</h3>
+                    <p>Find consistent supply of quality produce directly from verified farmers.</p>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-icon">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <h3>For Storage Providers</h3>
+                    <p>Maximize your storage utilization by connecting with farmers in your area.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="logo">
+                        <div class="logo-icon"><i class="fas fa-seedling"></i></div>
+                        <div class="logo-text">Agro<span>Tech</span></div>
+                    </div>
+                    <p style="margin-top: 20px; color: #ccc;">Connecting farmers directly to markets, reducing waste and increasing profitability for all stakeholders.</p>
+                </div>
+                
+                <div>
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#purpose">About Platform</a></li>
+                        <li><a href="marketplace.html">Browse Marketplace</a></li>
+                        <li><a href="index.html#contact">Contact Support</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3>Help & Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">User Guide</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 AgroTech Platform. All rights reserved. | <a href="signin.html" style="color: var(--primary-green);">Sign In</a> | <a href="register.html" style="color: var(--primary-green);">Register</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../js/main.js"></script>
+    <script>
+        // Flask Backend Configuration
+        const API_BASE_URL = window.location.origin; // Use same origin as frontend/backend
+
+        function showPopup(type, message, duration = 4200) {
+            const existing = document.querySelector('.toast-message');
+            if (existing) {
+                existing.remove();
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `toast-message ${type}`;
+            toast.innerHTML = `
+                <span class="toast-icon">${type === 'success' ? '✓' : type === 'error' ? '⚠' : 'ℹ'}</span>
+                <span>${message}</span>
+            `;
+
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.add('hide'), duration - 300);
+            setTimeout(() => toast.remove(), duration);
+        }
+
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle password visibility
+            const togglePassword = document.getElementById('toggle-password');
+            const passwordInput = document.getElementById('password');
+            
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    
+                    // Toggle icon
+                    const icon = this.querySelector('i');
+                    if (icon) {
+                        icon.classList.toggle('fa-eye');
+                        icon.classList.toggle('fa-eye-slash');
+                    }
+                });
+            }
+            
+            // Form submission with Flask backend
+            const signinForm = document.getElementById('signin-form');
+            if (signinForm) {
+                signinForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    // Get form values
+                    const email = document.getElementById('email').value.trim();
+                    const password = document.getElementById('password').value.trim();
+                    
+                    // Simple validation
+                    if (!email || !password) {
+                        showPopup('error', 'Please fill in all fields');
+                        return;
+                    }
+                    
+                    // Basic email validation
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        showPopup('error', 'Please enter a valid email address');
+                        return;
+                    }
+                    
+                    // Disable submit button
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Signing in...';
+                    
+                    try {
+                        // Send login request to Flask backend
+                        const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                email: email,
+                                password: password
+                            })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.status === 200) {
+                            // Success - store token and user info
+                            localStorage.setItem('authToken', result.token);
+                            localStorage.setItem('currentUser', JSON.stringify(result.user));
+                            localStorage.setItem('isLoggedIn', 'true');
+                            
+                            // Show success message and redirect
+                            showPopup('success', 'Login successful! Redirecting to waitlist...');
+                            setTimeout(() => window.location.href = 'waitlist.html', 900);
+                        } else if (response.status === 403 && result.status === 'pending') {
+                            showPopup('info', `${result.error || 'Still on waitlist'}, position #${result.position || 'N/A'}`);
+                            localStorage.setItem('isLoggedIn', 'false');
+                            setTimeout(() => window.location.href = 'waitlist.html', 900);
+                        } else if (response.status === 403) {
+                            showPopup('error', result.error || 'Access restricted.');
+                            submitBtn.disabled = false;
+                        } else {
+                            // Error response
+                            showPopup('error', (result.error || 'Login failed'));
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = originalText;
+                        }
+                    } catch (error) {
+                        console.error('Login error:', error);
+                        showPopup('error', 'Cannot connect to server. Please check if Flask backend is running at ' + API_BASE_URL);
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
