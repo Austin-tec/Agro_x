@@ -281,8 +281,16 @@
                             showPopup('success', 'Login successful! Redirecting to waitlist...');
                             setTimeout(() => window.location.href = 'waitlist.html', 900);
                         } else if (response.status === 403 && result.status === 'pending') {
-                            showPopup('info', `${result.error || 'Still on waitlist'}, position #${result.position || 'N/A'}`);
+                            const currentWaitlistUser = {
+                                email: email,
+                                waitlist_status: 'pending',
+                                waitlist_position: result.position || null
+                            };
+                            localStorage.removeItem('authToken');
+                            localStorage.setItem('currentUser', JSON.stringify(currentWaitlistUser));
                             localStorage.setItem('isLoggedIn', 'false');
+
+                            showPopup('info', `${result.error || 'Still on waitlist'}, position #${result.position || 'N/A'}`);
                             setTimeout(() => window.location.href = 'waitlist.html', 900);
                         } else if (response.status === 403) {
                             showPopup('error', result.error || 'Access restricted.');

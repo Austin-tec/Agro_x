@@ -216,10 +216,19 @@ document.addEventListener('DOMContentLoaded', async function() {
                     showPopup('success', 'Registration successful! You are now on the waitlist.');
                     setTimeout(() => window.location.href = 'waitlist.html', 900);
                 } else if (response.status === 202) {
-                    // Waitlist pending
+                    // Waitlist pending: keep the user on the site and preserve the email/session state
                     localStorage.removeItem('authToken');
-                    localStorage.removeItem('currentUser');
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        email: registrationData.email,
+                        first_name: registrationData.first_name,
+                        last_name: registrationData.last_name,
+                        user_type: registrationData.user_type,
+                        waitlist_status: 'pending',
+                        waitlist_position: result.position || null
+                    }));
                     localStorage.setItem('isLoggedIn', 'false');
+                    localStorage.setItem('waitlistStatusMessage', `A confirmation email has been sent to ${registrationData.email}.`);
+                    localStorage.setItem('waitlistStatusType', 'success');
 
                     showPopup('info', `You are on the waitlist at position ${result.position || 'unknown'}. You will receive an email once approved.`);
                     setTimeout(() => window.location.href = 'waitlist.html', 900);

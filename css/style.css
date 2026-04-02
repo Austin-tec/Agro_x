@@ -282,28 +282,93 @@ nav a:hover::after {
     flex-direction: column;
     gap: 6px;
     cursor: pointer;
+    padding: 10px;
+    border-radius: 12px;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.menu-toggle:hover {
+    background: rgba(255,255,255,0.08);
 }
 
 .menu-toggle span {
-    width: 26px;
-    height: 2px;
+    width: 28px;
+    height: 3px;
     background: #fff;
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.menu-toggle.open span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.menu-toggle.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.open span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
 }
 
 @media (max-width: 900px) {
+    .navbar {
+        padding: 10px 0;
+    }
+
+    .nav-inner {
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 0 18px;
+    }
+
+    .logo {
+        min-width: 0;
+    }
+
+    .logo-text {
+        font-size: 20px;
+    }
+
     .nav-links {
         position: absolute;
-        top: 80px;
+        top: 70px;
         left: 0;
         width: 100%;
-        background: #000;
+        background: rgba(0,0,0,0.95);
         flex-direction: column;
-        padding: 30px;
+        padding: 18px 20px;
         display: none;
+        gap: 16px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        z-index: 999;
     }
 
     .nav-links.active {
         display: flex;
+    }
+
+    .nav-links a {
+        width: 100%;
+        font-size: 0.98rem;
+        padding: 12px 0;
+    }
+
+    .nav-cta {
+        order: 3;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: space-between;
+    }
+
+    .nav-cta .user-button,
+    .nav-cta .notification-btn,
+    .nav-cta .btn {
+        min-width: 0;
     }
 
     .menu-toggle {
@@ -311,9 +376,51 @@ nav a:hover::after {
     }
 }
 
-/* User Menu */
-.user-menu {
-    position: relative;
+@media (max-width: 600px) {
+    .navbar {
+        padding: 8px 0;
+    }
+
+    .nav-inner {
+        gap: 10px;
+    }
+
+    .logo-text {
+        font-size: 18px;
+    }
+
+    .logo-icon {
+        font-size: 24px;
+    }
+
+    .nav-links {
+        top: 65px;
+        padding: 14px 16px;
+    }
+
+    .nav-links a {
+        font-size: 0.96rem;
+        padding: 10px 0;
+    }
+
+    .menu-toggle {
+        padding: 8px;
+    }
+
+    .menu-toggle span {
+        width: 24px;
+        height: 2.5px;
+    }
+
+    .nav-cta {
+        gap: 8px;
+    }
+
+    .nav-cta .user-button,
+    .nav-cta .notification-btn,
+    .nav-cta .btn {
+        width: 100%;
+    }
 }
 
 .user-button {
