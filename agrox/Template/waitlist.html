@@ -7,6 +7,32 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../css/style.css" />
+  <style>
+    .waitlist-alert {
+      margin: 20px 0 0;
+      padding: 18px 20px;
+      border-radius: 18px;
+      font-weight: 600;
+      display: none;
+      max-width: 100%;
+      color: #fff;
+    }
+    .waitlist-alert.show {
+      display: block;
+    }
+    .waitlist-alert.success {
+      background: rgba(38, 166, 91, 0.96);
+      border: 1px solid rgba(38, 166, 91, 0.7);
+    }
+    .waitlist-alert.info {
+      background: rgba(33, 150, 243, 0.95);
+      border: 1px solid rgba(33, 150, 243, 0.7);
+    }
+    .waitlist-alert.error {
+      background: rgba(244, 67, 54, 0.95);
+      border: 1px solid rgba(244, 67, 54, 0.7);
+    }
+  </style>
 </head>
 <body>
   <header class="navbar">
@@ -30,6 +56,8 @@
           <span class="waitlist-live-badge">Live count</span>
           <h1>You’re in line for Agro X access</h1>
           <p>Thank you for joining the waitlist. Your registration request is pending approval and we’ll notify you by email as soon as your account is live.</p>
+
+          <div id="waitlist-alert" class="waitlist-alert hidden"></div>
 
           <div class="waitlist-summary-card">
             <article class="waitlist-metric">
@@ -93,6 +121,19 @@
       }
     }
 
+    function showWaitlistAlert() {
+      const message = localStorage.getItem('waitlistStatusMessage');
+      const type = localStorage.getItem('waitlistStatusType') || 'info';
+      const alertEl = document.getElementById('waitlist-alert');
+
+      if (message && alertEl) {
+        alertEl.textContent = message;
+        alertEl.className = `waitlist-alert show ${type}`;
+        localStorage.removeItem('waitlistStatusMessage');
+        localStorage.removeItem('waitlistStatusType');
+      }
+    }
+
     async function refreshWaitlistData() {
       try {
         const statsResp = await fetch(`${API_BASE_URL}/api/waitlist/stats`);
@@ -132,6 +173,7 @@
 
     document.addEventListener('DOMContentLoaded', function() {
       updateWaitlistHeader();
+      showWaitlistAlert();
       refreshWaitlistData();
       document.getElementById('refresh-waitlist')?.addEventListener('click', refreshWaitlistData);
       setInterval(refreshWaitlistData, 15000);

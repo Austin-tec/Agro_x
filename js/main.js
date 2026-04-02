@@ -69,11 +69,38 @@ function setupHeaderScroll() {
     });
 }
 
+// Mobile navigation toggle
+function setupMobileNav() {
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.querySelector('.nav-links');
+    if (!menuToggle || !navLinks) return;
+
+    menuToggle.addEventListener('click', function() {
+        navLinks.classList.toggle('active');
+        menuToggle.classList.toggle('open');
+    });
+
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function() {
+            navLinks.classList.remove('active');
+            menuToggle.classList.remove('open');
+        });
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.navbar')) {
+            navLinks.classList.remove('active');
+            menuToggle.classList.remove('open');
+        }
+    });
+}
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     setupPasswordToggle();
     setupSmoothScrolling();
     setupHeaderScroll();
+    setupMobileNav();
     
     // Set current year in footer
     const yearElements = document.querySelectorAll('.current-year');
