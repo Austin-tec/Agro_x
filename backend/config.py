@@ -3,6 +3,9 @@ Flask application configuration
 """
 import os
 from datetime import timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Config:
     """Base configuration"""
@@ -11,11 +14,20 @@ class Config:
     
     # Database
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///agrox.db')
+    LOCAL_SQLITE_DATABASE_URI = os.getenv('LOCAL_SQLITE_DATABASE_URI', 'sqlite:///agrox.db')
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,
+        'pool_size': int(os.getenv('DB_POOL_SIZE', 5)),
+        'max_overflow': int(os.getenv('DB_MAX_OVERFLOW', 10)),
+        'pool_timeout': int(os.getenv('DB_POOL_TIMEOUT', 30)),
+        'pool_recycle': int(os.getenv('DB_POOL_RECYCLE', 1800)),
+    }
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # JWT
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'your-jwt-secret-key-change-in-production')
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=10)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=24)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=7)
     
     # Flask-Mail Configuration
     MAIL_SERVER = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
@@ -35,6 +47,7 @@ class Config:
     # App Settings
     DEBUG = os.getenv('DEBUG', False)
     TESTING = False
+    USE_SUPABASE = str(os.getenv('USE_SUPABASE', 'false')).lower() in ('true', '1', 'yes')
 
 
 class DevelopmentConfig(Config):

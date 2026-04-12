@@ -147,6 +147,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Form submission with Flask backend
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            showPopup('info', 'You are already signed in. Log out before creating a new account.');
+            setTimeout(() => window.location.href = 'waitlist.html', 900);
+            return;
+        }
+
         registerForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -155,7 +161,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 showPopup('error', 'Please fill in all required fields');
                 return;
             }
-            
+
             // Check if passwords match
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
@@ -215,6 +221,16 @@ document.addEventListener('DOMContentLoaded', async function() {
                     // Show success message and redirect
                     showPopup('success', 'Registration successful! You are now on the waitlist.');
                     setTimeout(() => window.location.href = 'waitlist.html', 900);
+                } else if (response.status === 202 && result.requires_verification) {
+                    // OTP verification required
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('currentUser');
+                    localStorage.setItem('isLoggedIn', 'false');
+                    localStorage.setItem('pendingVerificationEmail', registrationData.email);
+                    localStorage.setItem('pendingVerificationName', registrationData.first_name || registrationData.email);
+
+                    showPopup('success', `A verification code was sent to ${registrationData.email}. Please enter it to complete registration.`);
+                    setTimeout(() => window.location.href = `verify-otp.html?email=${encodeURIComponent(registrationData.email)}` , 900);
                 } else if (response.status === 202) {
                     // Waitlist pending: keep the user on the site and preserve the email/session state
                     localStorage.removeItem('authToken');
@@ -245,6 +261,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                 submitBtn.textContent = originalText;
             }
         });
+
+        const googleAuthBtn = document.getElementById('google-auth-button');
+        if (googleAuthBtn) {
+            googleAuthBtn.addEventListener('click', function() {
+                window.location.href = `${API_BASE_URL}/api/auth/google/login`;
+            });
+        }
     }
     
     // Helper function from main.js

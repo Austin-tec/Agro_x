@@ -99,6 +99,23 @@
   <script>
     const API_BASE_URL = window.location.origin;
 
+    function attachWaitlistLogout() {
+      const logoutBtn = document.getElementById('logout-btn');
+      if (!logoutBtn) return;
+
+      logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('pendingVerificationEmail');
+        localStorage.removeItem('pendingVerificationName');
+        localStorage.removeItem('waitlistStatusMessage');
+        localStorage.removeItem('waitlistStatusType');
+        window.location.href = 'signin.html';
+      });
+    }
+
     function updateWaitlistHeader() {
       const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
       const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -108,7 +125,7 @@
 
       if (currentUser || isLoggedIn) {
         if (authAction) {
-          authAction.innerHTML = '<span class="nav-status">Welcome, ' + (currentUser?.first_name || currentUser?.email || 'member') + '</span>';
+          authAction.innerHTML = '<span class="nav-status">Welcome, ' + (currentUser?.first_name || currentUser?.email || 'member') + '</span> <a href="#" id="logout-btn" class="btn ghost" style="margin-left: 10px;"><i class="fas fa-sign-out-alt"></i> Sign Out</a>';
         }
         if (signinBtn) signinBtn.style.display = 'none';
         if (registerBtn) registerBtn.style.display = 'none';
@@ -119,6 +136,8 @@
         if (signinBtn) signinBtn.style.display = '';
         if (registerBtn) registerBtn.style.display = '';
       }
+
+      attachWaitlistLogout();
     }
 
     function showWaitlistAlert() {
@@ -137,24 +156,28 @@
     async function refreshWaitlistData() {
       try {
         const statsResp = await fetch(`${API_BASE_URL}/api/waitlist/stats`);
-        const stats = statsResp.ok ? await statsResp.json() : null;
-
-        const userData = JSON.parse(localStorage.getItem('currentUser') || 'null');
-        const userEmail = userData?.email;
-        let userPosition = '--';
-
-        if (userEmail) {
-          const checkResp = await fetch(`${API_BASE_URL}/api/waitlist/check/${encodeURIComponent(userEmail)}`);
-          if (checkResp.ok) {
-            const checkData = await checkResp.json();
-            if (checkData.in_waitlist) {
-              userPosition = checkData.position || '--';
+            if (!statsResp.ok) {
+              console.error('Waitlist stats fetch failed with status', statsResp.status);
+            } else {
+              const stats = await statsResp.json();
+              document.getElementById('total-waitlist').textContent = stats.total_waitlist || 0;
             }
-          }
-        }
 
-        document.getElementById('total-waitlist').textContent = stats ? stats.total_waitlist || 0 : 'N/A';
-        document.getElementById('your-position').textContent = userPosition;
+            const userData = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            const userEmail = userData?.email;
+            let userPosition = document.getElementById('your-position').textContent || '--';
+
+            if (userEmail) {
+              const checkResp = await fetch(`${API_BASE_URL}/api/waitlist/check/${encodeURIComponent(userEmail)}`);
+              if (checkResp.ok) {
+                const checkData = await checkResp.json();
+                if (checkData.in_waitlist) {
+                  userPosition = checkData.position || '--';
+                }
+              } else {
+                console.error('Waitlist check fetch failed with status', checkResp.status);
+              }
+            }
 
         let summaryText = 'Everyone is currently in the queue for full AgroX access.';
         if (userEmail) {

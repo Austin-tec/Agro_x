@@ -86,6 +86,28 @@ class User(db.Model):
         }
 
 
+class EmailOTP(db.Model):
+    """One-time password (OTP) records for email verification"""
+    __tablename__ = 'email_otps'
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), nullable=False, index=True)
+    code = db.Column(db.String(10), nullable=False)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    used = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'email': self.email,
+            'code': self.code,
+            'expires_at': self.expires_at.isoformat(),
+            'used': self.used,
+            'created_at': self.created_at.isoformat()
+        }
+
+
 class LaunchSettings(db.Model):
     """Global settings for application launch"""
     __tablename__ = 'launch_settings'

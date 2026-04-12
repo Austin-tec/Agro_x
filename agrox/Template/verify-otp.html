@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email - Agro X</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/register.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container nav-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-icon"><i class="fas fa-seedling"></i></div>
+                <div class="logo-text">Agro<span>X</span></div>
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#about">About</a>
+                <a href="marketplace.html">Marketplace</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+
+            <div class="nav-cta">
+                <a href="signin.html" class="btn ghost">Sign In</a>
+            </div>
+
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="auth-container">
+        <div class="container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h1>Verify Your Email</h1>
+                    <p>Enter the 6-digit code we sent to your email address to complete registration.</p>
+                </div>
+
+                <form id="verify-otp-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="verify-email">Email Address</label>
+                        <input type="email" id="verify-email" name="verify-email" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="verification-code">Verification Code</label>
+                        <input type="text" id="verification-code" name="verification-code" placeholder="Enter your code" maxlength="6" required>
+                    </div>
+
+                    <button type="submit" class="cta-button auth-submit">Verify Code</button>
+
+                    <div class="auth-footer">
+                        <p>Didn't receive the code? <a href="register.html">Return to registration</a></p>
+                        <p>Already verified? <a href="signin.html">Sign in</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="copyright">
+                <p>&copy; 2023 AgroTech Platform. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../js/main.js"></script>
+    <script src="../../js/verify-otp.js"></script>
+</body>
+</html>

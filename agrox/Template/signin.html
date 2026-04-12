@@ -75,44 +75,14 @@
                     </div>
                     
                     <div class="social-auth">
-                        <button type="button" class="social-button google">
-                            <i class="fab fa-google"></i> Google
-                        </button>
-                        <button type="button" class="social-button facebook">
-                            <i class="fab fa-facebook-f"></i> Facebook
+                        <button type="button" id="google-auth-button" class="social-button google">
+                            <i class="fab fa-google"></i> Continue with Google
                         </button>
                     </div>
                     
                     <div class="auth-footer">
                         <p>Don't have an account? <a href="register.html">Register here</a></p>
                         <p>Are you a business? <a href="register.html?type=business">Sign up as business</a></p>
-                    </div>
-                    
-                    <!-- Demo Accounts Section -->
-                    <div class="demo-accounts">
-                        <details style="background: rgba(60, 255, 0, 0.08); border: 1px solid rgba(60, 255, 0, 0.2); border-radius: 8px; padding: 15px; margin-top: 20px; cursor: pointer;">
-                            <summary style="color: var(--green); font-weight: 600; display: flex; align-items: center; gap: 10px;">
-                                <i class="fas fa-lightbulb"></i> Demo Accounts (For Testing)
-                            </summary>
-                            <div style="margin-top: 15px; color: #999; font-size: 0.9rem;">
-                                <p style="margin-bottom: 12px; color: #aaa;"><strong>Try these accounts with password: 123456</strong></p>
-                                <div style="display: grid; gap: 10px;">
-                                    <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border-left: 3px solid var(--green);">
-                                        <strong style="color: var(--green);">👨‍🌾 Farmer:</strong> farmer@example.com
-                                    </div>
-                                    <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border-left: 3px solid var(--green);">
-                                        <strong style="color: var(--green);">👨‍💼 Buyer:</strong> buyer@example.com
-                                    </div>
-                                    <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border-left: 3px solid var(--green);">
-                                        <strong style="color: var(--green);">🚚 Logistics:</strong> logistics@example.com
-                                    </div>
-                                    <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border-left: 3px solid var(--green);">
-                                        <strong style="color: var(--green);">🏢 Storage:</strong> storage@example.com
-                                    </div>
-                                </div>
-                                <p style="margin-top: 12px; font-size: 0.85rem; color: #777;">These accounts have pre-loaded demo messages, requests, and conversations for testing the full platform experience.</p>
-                            </div>
-                        </details>
                     </div>
                 </form>
             </div>
@@ -307,6 +277,13 @@
                         submitBtn.disabled = false;
                         submitBtn.textContent = originalText;
                     }
+                });
+            }
+
+            const googleAuthButton = document.getElementById('google-auth-button');
+            if (googleAuthButton) {
+                googleAuthButton.addEventListener('click', function() {
+                    window.location.href = `${API_BASE_URL}/api/auth/google/login`;
                 });
             }
         });

@@ -21,30 +21,28 @@ class EmailService:
         """Send waitlist confirmation email to new registrant"""
         try:
             msg = Message(
-                subject='Welcome to AgroX Waitlist! 🎉',
+                subject='Welcome to the Waitlist: Transforming Agriculture with Agro X 🌾',
                 recipients=[recipient_email],
                 html=f"""
-                <h2>Welcome to AgroX, {first_name}!</h2>
-                <p>Thank you for joining our waitlist. We're excited to have you on board!</p>
-                
-                <div style="background-color: #f0f0f0; padding: 20px; border-radius: 5px; margin: 20px 0;">
-                    <p><strong>Your Waitlist Position: #{position}</strong></p>
-                    <p>We're organizing our platform and will be rolling out access soon. You're {position} in line!</p>
-                </div>
-                
-                <p><strong>What to expect:</strong></p>
+                <h2>Dear {first_name},</h2>
+                <p>Thank you for registering for the Agro X waitlist. We are pleased to confirm that your spot is secured.</p>
+
+                <p>At Agro X, our mission is to redefine the agricultural supply chain in Nigeria by connecting farmers directly to the marketplace. By removing unnecessary middlemen, we are working to ensure fairer prices for producers and more affordable food costs for consumers.</p>
+
+                <p><strong>What this means for you:</strong></p>
                 <ul>
-                    <li>Early access to the AgroX platform</li>
-                    <li>Exclusive updates about our launch</li>
-                    <li>Special early-adopter benefits</li>
-                    <li>Direct feedback channel with our team</li>
+                    <li><strong>Priority Access:</strong> Be the first to use the platform when we go live in your region.</li>
+                    <li><strong>Progress Updates:</strong> Receive behind-the-scenes insights as we scale our logistics and infrastructure.</li>
+                    <li><strong>Early-Bird Incentives:</strong> Access to special rates and features reserved only for our initial supporters.</li>
                 </ul>
-                
-                <p>We'll keep you updated with regular progress emails. In the meantime, watch your inbox for exciting announcements!</p>
-                
-                <p><strong>Questions?</strong> Reply to this email or visit our website for more information.</p>
-                
-                <p>Best regards,<br>The AgroX Team</p>
+
+                <p>We are currently in the process of scaling our operations to ensure a seamless experience at launch. We will notify you as soon as we are ready to onboard the next phase of users.</p>
+
+                <p>In the meantime, you can follow our journey and see our latest updates on <a href="https://twitter.com">Twitter/X</a> or <a href="https://instagram.com">Instagram</a>.</p>
+
+                <p>Thank you for being a part of this mission to build a more sustainable food ecosystem.</p>
+
+                <p>Best regards,<br>Austin Ifeanyi<br>Founder, Agro X</p>
                 """
             )
             self.mail.send(msg)
@@ -78,6 +76,30 @@ class EmailService:
             return True
         except Exception as e:
             logger.error(f"Error sending registration confirmation to {recipient_email}: {str(e)}")
+            return False
+
+    def send_otp_code(self, recipient_email: str, first_name: str, code: str) -> bool:
+        """Send OTP code to new registrants for email verification"""
+        try:
+            msg = Message(
+                subject='Your Agro X Verification Code',
+                recipients=[recipient_email],
+                html=f"""
+                <h2>Welcome to the waitlist, {first_name}!</h2>
+                <p>Thank you for registering with Agro X. To complete your account verification, please use the one-time code below:</p>
+                <div style=\"background-color: #f0f0f0; padding: 20px; border-radius: 8px; margin: 18px 0; font-size: 1.2rem; letter-spacing: 1px;\">
+                    <strong>{code}</strong>
+                </div>
+                <p>This code will expire in 15 minutes. Once verified, you will be redirected to the waitlist page.</p>
+                <p>If you did not request this code, please ignore this email.</p>
+                <p>Best regards,<br/>Founder, Agro X</p>
+                """
+            )
+            self.mail.send(msg)
+            logger.info(f"OTP email sent to {recipient_email}")
+            return True
+        except Exception as e:
+            logger.error(f"Error sending OTP email to {recipient_email}: {str(e)}")
             return False
     
     def send_new_user_notification(self, existing_waitlist: List[dict], new_user_name: str, new_user_email: str) -> int:

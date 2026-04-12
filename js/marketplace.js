@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const isLoggedIn = !!localStorage.getItem('authToken');
     
-    // If not logged in, show demo message but allow browsing
+    // Allow guests to browse marketplace with limited features
     if (!isLoggedIn) {
         console.log('User is browsing marketplace as guest');
     }
@@ -63,138 +63,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 listings = data.listings || data || [];
             } else {
                 console.error('Failed to load listings from API');
-                // Fallback to sample data if API fails
-                listings = getSampleListings();
+                listings = [];
             }
         } catch (error) {
             console.error('Error loading listings:', error);
-            listings = getSampleListings();
+            listings = [];
         }
     }
 
-    // Sample listings for fallback
-    function getSampleListings() {
-        return [
-            {
-                id: "1",
-                title: "Fresh Organic Tomatoes",
-                category: "vegetables",
-                price: 2.5,
-                unit: "kg",
-                quantity: 500,
-                location: "Northern Region",
-                harvest_date: "2026-02-28",
-                description: "Freshly harvested organic tomatoes, grown without pesticides. Perfect for retail or direct consumption.",
-                farmer_id: 1,
-                created_at: new Date().toISOString(),
-                status: "active"
-            },
-            {
-                id: "2",
-                title: "Premium Wheat",
-                category: "grains",
-                price: 245,
-                unit: "ton",
-                quantity: 50,
-                location: "Western Region",
-                harvest_date: "2026-02-15",
-                description: "High-quality wheat suitable for flour production. Certified quality with excellent protein content.",
-                farmer_id: 2,
-                created_at: new Date().toISOString(),
-                status: "active"
-            },
-            {
-                id: "3",
-                title: "Climate-Controlled Warehouse Storage",
-                category: "storage",
-                price: 0.75,
-                unit: "bag/month",
-                quantity: 10000,
-                location: "Central Valley",
-                description: "Professional storage facility with temperature and humidity control. Suitable for maize, grains, and produce.",
-                farmer_id: 3,
-                created_at: new Date().toISOString(),
-                status: "active"
-            },
-            {
-                id: "4",
-                title: "Fresh Dairy Products",
-                category: "dairy",
-                price: 2.5,
-                unit: "L (Milk)",
-                quantity: 500,
-                location: "Southern Farm District",
-                description: "Fresh milk, yogurt, and cheese from our certified dairy farm. Daily production with cold chain delivery available.",
-                farmer_id: 4,
-                created_at: new Date().toISOString(),
-                status: "active"
-            },
-            {
-                id: "5",
-                title: "Express Logistics - Refrigerated Transport",
-                category: "logistics",
-                price: 1200,
-                unit: "trip",
-                quantity: 15,
-                location: "Central Hub",
-                description: "Refrigerated truck transport service. Perfect for perishables. Daily routes available throughout the region.",
-                farmer_id: 5,
-                created_at: new Date().toISOString(),
-                status: "active"
-            }
-        ];
-    }
-
-    // Initialize demo requests if none exist
+    // Load existing requests from storage, but do not initialize demo request data.
     if (requests.length === 0) {
-        const now = Date.now();
-        requests = [
-            {
-                id: 'req001',
-                buyer: 'buyer@example.com',
-                provider: 'farmer@example.com',
-                listingId: '1',
-                quantity: 150,
-                message: 'I would like to place an order for 150kg of organic tomatoes. Please confirm availability and best delivery date.',
-                status: 'Approved',
-                createdAt: new Date(now - 2 * 60 * 60 * 1000).toISOString(),
-                messages: []
-            },
-            {
-                id: 'req002',
-                buyer: 'farmer2@example.com',
-                provider: 'logistics@example.com',
-                listingId: '5',
-                quantity: 80,
-                message: 'Requesting transport service for 80 tons of wheat. Looking for pickup tomorrow if possible.',
-                status: 'Approved',
-                createdAt: new Date(now - 4 * 60 * 60 * 1000).toISOString(),
-                messages: []
-            },
-            {
-                id: 'req003',
-                buyer: 'seller@example.com',
-                provider: 'storage@example.com',
-                listingId: '3',
-                quantity: 2000,
-                message: 'Requesting storage for 2000 bags of maize in climate-controlled facility for 4 months.',
-                status: 'Approved',
-                createdAt: new Date(now - 6 * 60 * 60 * 1000).toISOString(),
-                messages: []
-            },
-            {
-                id: 'req004',
-                buyer: 'buyer2@example.com',
-                provider: 'farmer3@example.com',
-                listingId: '4',
-                quantity: 100,
-                message: 'Interested in bulk dairy order: 100L fresh milk weekly and 50kg cheese monthly. Ongoing contract.',
-                status: 'Pending',
-                createdAt: new Date(now - 2 * 60 * 60 * 1000).toISOString(),
-                messages: []
-            }
-        ];
-        localStorage.setItem('requests', JSON.stringify(requests));
+        requests = [];
     }
     
     // DOM elements

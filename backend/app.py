@@ -4,13 +4,17 @@ Main application with waitlist and user management
 """
 import os
 import sys
-from flask import Flask, request, jsonify, render_template, abort, send_from_directory
+from flask import Flask, request, jsonify, render_template, abort, redirect, send_from_directory, url_for, session
+from authlib.integrations.requests_client import OAuth2Session
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, verify_jwt_in_request
 from email_validator import validate_email, EmailNotValidError
-from datetime import datetime
+from sqlalchemy import create_engine, text
+from sqlalchemy.exc import OperationalError
+from datetime import datetime, timedelta
 import logging
 import json
+import secrets
 
 # Ensure backend package imports work when running this file directly
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -18,13 +22,73 @@ if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
 from backend.config import config
-from backend.models import db, Waitlist, User, LaunchSettings, Listing, Order, OrderItem, Cart, CartItem, Review
+from backend.models import db, Waitlist, User, EmailOTP, LaunchSettings, Listing, Order, OrderItem, Cart, CartItem, Review
 from backend.email_service import email_service
+from backend.supabase_client import init_supabase, get_supabase_client
 from jinja2 import TemplateNotFound
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def is_sqlite_uri(uri: str) -> bool:
+    return bool(uri and uri.strip().startswith('sqlite:'))
+
+
+def build_engine_options(db_uri: str):
+    if is_sqlite_uri(db_uri):
+        return {
+            'pool_pre_ping': True,
+            'connect_args': {
+                'check_same_thread': False
+            }
+        }
+
+    return {
+        'pool_pre_ping': True,
+        'pool_size': int(os.getenv('DB_POOL_SIZE', 5)),
+        'max_overflow': int(os.getenv('DB_MAX_OVERFLOW', 10)),
+        'pool_timeout': int(os.getenv('DB_POOL_TIMEOUT', 30)),
+        'pool_recycle': int(os.getenv('DB_POOL_RECYCLE', 1800)),
+        'connect_args': {
+            'sslmode': os.getenv('DB_SSLMODE', 'require')
+        }
+    }
+
+
+def database_is_available(db_uri: str) -> bool:
+    if is_sqlite_uri(db_uri):
+        return True
+
+    try:
+        engine = create_engine(db_uri, pool_pre_ping=True, connect_args={'sslmode': os.getenv('DB_SSLMODE', 'require')})
+        with engine.connect() as conn:
+            conn.execute(text('SELECT 1'))
+        engine.dispose()
+        return True
+    except Exception as e:
+        logger.warning(f"Remote DB unavailable during startup: {e}")
+        return False
+
+
+def configure_database(app):
+    requested_uri = os.getenv('DATABASE_URL', app.config.get('SQLALCHEMY_DATABASE_URI'))
+    fallback_uri = os.getenv('LOCAL_SQLITE_DATABASE_URI', 'sqlite:///agrox.db')
+
+    if requested_uri and not is_sqlite_uri(requested_uri):
+        if database_is_available(requested_uri):
+            app.config['SQLALCHEMY_DATABASE_URI'] = requested_uri
+            app.config['DB_FALLBACK_ACTIVE'] = False
+        else:
+            app.logger.warning('Remote database unreachable, falling back to local SQLite DB: %s', fallback_uri)
+            app.config['SQLALCHEMY_DATABASE_URI'] = fallback_uri
+            app.config['DB_FALLBACK_ACTIVE'] = True
+            app.config['DB_FALLBACK_REASON'] = 'remote_db_unavailable'
+    else:
+        app.config['DB_FALLBACK_ACTIVE'] = False
+
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = build_engine_options(app.config['SQLALCHEMY_DATABASE_URI'])
+
 
 def create_app(config_name='development'):
     """Application factory"""
@@ -48,36 +112,218 @@ def create_app(config_name='development'):
 
     # Load configuration
     app.config.from_object(config[config_name])
+    configure_database(app)
+
+    # Initialize Supabase when enabled
+    if app.config.get('USE_SUPABASE'):
+        init_supabase()
     
     # Initialize extensions
     db.init_app(app)
     email_service.init_app(app)
     jwt = JWTManager(app)
     CORS(app, origins="*", supports_credentials=True)
-    
-    # Create tables
-    with app.app_context():
-        db.create_all()
-        env_allow_registration = os.getenv('ALLOW_REGISTRATION')
-        allow_registration = env_allow_registration.lower() in ('1', 'true', 'yes', 'y') if env_allow_registration is not None else True
 
-        # Initialize launch settings if not exists
-        if LaunchSettings.query.first() is None:
-            # Use environment variable to control registration on first deploy.
-            # By default, allow registration so Render deployments do not stay locked in waitlist-only mode.
-            launch_settings = LaunchSettings(
-                is_launched=False,
-                allow_registration=allow_registration
-            )
-            db.session.add(launch_settings)
-            db.session.commit()
-        else:
-            # If an explicit env var is provided, use it to update the current setting.
-            if env_allow_registration is not None:
-                launch_settings = LaunchSettings.query.first()
-                launch_settings.allow_registration = allow_registration
-                db.session.commit()
+    def is_google_oauth_configured():
+        return bool(os.getenv('GOOGLE_CLIENT_ID') and os.getenv('GOOGLE_CLIENT_SECRET'))
+
+    def get_google_oauth_session(redirect_uri=None, state=None):
+        return OAuth2Session(
+            client_id=os.getenv('GOOGLE_CLIENT_ID'),
+            client_secret=os.getenv('GOOGLE_CLIENT_SECRET'),
+            scope='openid email profile',
+            redirect_uri=redirect_uri,
+            state=state
+        )
+
+    def generate_otp_code(length=6):
+        return ''.join(secrets.choice('0123456789') for _ in range(length))
+
+    def create_otp_record(email: str, code: str):
+        expires_at = datetime.utcnow() + timedelta(minutes=15)
+        otp = EmailOTP(email=email, code=code, expires_at=expires_at)
+        db.session.add(otp)
+        db.session.commit()
+        return otp
+
+    def get_optional_jwt_identity():
+        try:
+            verify_jwt_in_request(optional=True)
+            return get_jwt_identity()
+        except Exception:
+            return None
     
+    # Create tables and initialize launch settings when the DB is available.
+    with app.app_context():
+        try:
+            db.create_all()
+            env_allow_registration = os.getenv('ALLOW_REGISTRATION')
+            allow_registration = env_allow_registration.lower() in ('1', 'true', 'yes', 'y') if env_allow_registration is not None else True
+
+            # Initialize launch settings if not exists
+            if LaunchSettings.query.first() is None:
+                # Use environment variable to control registration on first deploy.
+                # By default, allow registration so Render deployments do not stay locked in waitlist-only mode.
+                launch_settings = LaunchSettings(
+                    is_launched=False,
+                    allow_registration=allow_registration
+                )
+                db.session.add(launch_settings)
+                db.session.commit()
+            else:
+                # If an explicit env var is provided, use it to update the current setting.
+                if env_allow_registration is not None:
+                    launch_settings = LaunchSettings.query.first()
+                    launch_settings.allow_registration = allow_registration
+                    db.session.commit()
+        except OperationalError as e:
+            logger.error(f"Database unavailable during startup: {str(e)}")
+            try:
+                db.session.rollback()
+            except Exception:
+                pass
+            try:
+                db.session.remove()
+            except Exception:
+                pass
+            try:
+                db.engine.dispose()
+            except Exception:
+                pass
+            logger.error("Continuing startup with database unavailable. API routes will return 503 until Neon recovers.")
+    
+    @app.route('/api/auth/google/login')
+    def google_login():
+        if not is_google_oauth_configured():
+            return jsonify({'error': 'Google OAuth is not configured.'}), 503
+
+        redirect_uri = url_for('google_auth_callback', _external=True)
+        oauth2 = get_google_oauth_session(redirect_uri=redirect_uri)
+        authorization_url, state = oauth2.create_authorization_url(
+            'https://accounts.google.com/o/oauth2/v2/auth',
+            access_type='offline',
+            prompt='select_account'
+        )
+        session['google_oauth_state'] = state
+        return redirect(authorization_url)
+
+    @app.route('/api/auth/google/callback')
+    def google_auth_callback():
+        if not is_google_oauth_configured():
+            return jsonify({'error': 'Google OAuth is not configured.'}), 503
+
+        try:
+            redirect_uri = url_for('google_auth_callback', _external=True)
+            oauth2 = get_google_oauth_session(redirect_uri=redirect_uri, state=session.get('google_oauth_state'))
+            token = oauth2.fetch_token(
+                'https://oauth2.googleapis.com/token',
+                authorization_response=request.url,
+                client_secret=os.getenv('GOOGLE_CLIENT_SECRET')
+            )
+            user_info = oauth2.get('https://openidconnect.googleapis.com/v1/userinfo').json()
+
+            if not user_info or not user_info.get('email'):
+                return jsonify({'error': 'Unable to retrieve Google account email.'}), 400
+
+            email = user_info.get('email', '').strip().lower()
+            if not email:
+                return jsonify({'error': 'Invalid Google account email.'}), 400
+
+            profile_name = (user_info.get('name') or '').strip()
+            split_name = profile_name.split() if profile_name else []
+            first_name = user_info.get('given_name') or (split_name[0] if split_name else 'User')
+            last_name = user_info.get('family_name') or (' '.join(split_name[1:]) if len(split_name) > 1 else '')
+
+            waitlist_entry = Waitlist.query.filter_by(email=email).first()
+            user = User.query.filter_by(email=email).first()
+            launch_settings = LaunchSettings.query.first()
+            allow_reg = launch_settings.allow_registration if launch_settings else True
+
+            if not user and not allow_reg:
+                if waitlist_entry is None:
+                    last_waitlist = Waitlist.query.order_by(Waitlist.position.desc()).first()
+                    next_position = (last_waitlist.position + 1) if last_waitlist else 1
+                    waitlist_entry = Waitlist(
+                        email=email,
+                        first_name=first_name,
+                        last_name=last_name,
+                        phone=user_info.get('phone') or '',
+                        user_type='buyer',
+                        location='',
+                        business_name='',
+                        farm_size='',
+                        newsletter=True,
+                        position=next_position,
+                        status='pending'
+                    )
+                    db.session.add(waitlist_entry)
+                    db.session.commit()
+
+                    email_service.send_waitlist_confirmation(
+                        email,
+                        first_name or 'Friend',
+                        next_position
+                    )
+
+                user_payload = {
+                    'email': email,
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'waitlist_status': 'pending',
+                    'waitlist_position': waitlist_entry.position
+                }
+
+                return render_template(
+                    'oauth-callback.html',
+                    status='waitlist',
+                    redirect_url='/waitlist.html',
+                    token='',
+                    user=user_payload,
+                    message=f'Your account is on the waitlist at position {waitlist_entry.position}.'
+                )
+
+            if not user:
+                user = User(
+                    email=email,
+                    first_name=first_name,
+                    last_name=last_name,
+                    user_type='buyer',
+                    location='',
+                    business_name='',
+                    farm_size='',
+                    newsletter=True,
+                    is_active=True
+                )
+                user.set_password(secrets.token_urlsafe(24))
+                db.session.add(user)
+                db.session.commit()
+
+                if waitlist_entry:
+                    waitlist_entry.status = 'registered'
+                    db.session.commit()
+
+                email_service.send_registration_confirmation(
+                    email,
+                    first_name or email
+                )
+
+            if not user.is_active:
+                user.is_active = True
+                db.session.commit()
+
+            access_token = create_access_token(identity=user.id)
+            return render_template(
+                'oauth-callback.html',
+                status='authenticated',
+                redirect_url='/waitlist.html',
+                token=access_token,
+                user=user.to_dict(),
+                message='Google sign-in successful. Redirecting to your dashboard.'
+            )
+        except Exception as e:
+            logger.error(f"Google OAuth callback error: {str(e)}")
+            return jsonify({'error': 'Google authentication failed.'}), 500
+
     # ==================== WAITLIST ROUTES ====================
     
     @app.route('/api/waitlist/register', methods=['POST'])
@@ -100,7 +346,7 @@ def create_app(config_name='development'):
             except EmailNotValidError as e:
                 return jsonify({'error': f'Invalid email: {str(e)}'}), 400
             
-            # Check if already in waitlist or registered
+            # Check if already in waitlist
             existing_waitlist = Waitlist.query.filter_by(email=email).first()
             if existing_waitlist:
                 return jsonify({
@@ -109,9 +355,10 @@ def create_app(config_name='development'):
                     'status': existing_waitlist.status
                 }), 409
             
-            existing_user = User.query.filter_by(email=email).first()
-            if existing_user:
-                return jsonify({'error': 'Email already registered'}), 409
+            # Note: We allow registered users to also join the waitlist
+            # existing_user = User.query.filter_by(email=email).first()
+            # if existing_user:
+            #     return jsonify({'error': 'Email already registered'}), 409
             
             # Get next position in waitlist
             last_waitlist = Waitlist.query.order_by(Waitlist.position.desc()).first()
@@ -161,12 +408,40 @@ def create_app(config_name='development'):
                 'status': 'pending',
                 'email': email
             }), 201
-            
         except Exception as e:
             logger.error(f"Error in register_waitlist: {str(e)}")
             return jsonify({'error': 'Server error: ' + str(e)}), 500
-    
-    
+
+    @app.route('/api/waitlist/send-confirmation', methods=['POST'])
+    def send_waitlist_confirmation_email():
+        """Send a waitlist confirmation email on demand"""
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({'error': 'No data provided'}), 400
+
+            email = data.get('email', '').strip().lower()
+            if not email:
+                return jsonify({'error': 'Email is required'}), 400
+
+            try:
+                validate_email(email)
+            except EmailNotValidError as e:
+                return jsonify({'error': f'Invalid email: {str(e)}'}), 400
+
+            waitlist_entry = Waitlist.query.filter_by(email=email).first()
+            if not waitlist_entry:
+                return jsonify({'error': 'Waitlist entry not found'}), 404
+
+            first_name = data.get('first_name') or waitlist_entry.first_name or email.split('@')[0]
+            if email_service.send_waitlist_confirmation(email, first_name, waitlist_entry.position):
+                return jsonify({'message': 'Confirmation email sent'}), 200
+
+            return jsonify({'error': 'Failed to send confirmation email'}), 500
+        except Exception as e:
+            logger.error(f"Error in send_waitlist_confirmation_email: {str(e)}")
+            return jsonify({'error': 'Server error'}), 500
+
     @app.route('/api/waitlist/check/<email>', methods=['GET'])
     def check_waitlist_status(email):
         """Check if email is in waitlist and get position"""
@@ -187,6 +462,21 @@ def create_app(config_name='development'):
                 'created_at': waitlist_entry.created_at.isoformat()
             }), 200
             
+        except OperationalError as e:
+            logger.error(f"Database operational error checking waitlist: {str(e)}")
+            try:
+                db.session.rollback()
+            except Exception:
+                pass
+            try:
+                db.session.remove()
+            except Exception:
+                pass
+            try:
+                db.engine.dispose()
+            except Exception:
+                pass
+            return jsonify({'error': 'Database unavailable. Please try again shortly.'}), 503
         except Exception as e:
             logger.error(f"Error checking waitlist: {str(e)}")
             return jsonify({'error': 'Server error'}), 500
@@ -216,6 +506,21 @@ def create_app(config_name='development'):
                 }
             }), 200
             
+        except OperationalError as e:
+            logger.error(f"Database operational error getting waitlist stats: {str(e)}")
+            try:
+                db.session.rollback()
+            except Exception:
+                pass
+            try:
+                db.session.remove()
+            except Exception:
+                pass
+            try:
+                db.engine.dispose()
+            except Exception:
+                pass
+            return jsonify({'error': 'Database unavailable. Please try again shortly.'}), 503
         except Exception as e:
             logger.error(f"Error getting waitlist stats: {str(e)}")
             return jsonify({'error': 'Server error'}), 500
@@ -232,6 +537,11 @@ def create_app(config_name='development'):
             if not data:
                 return jsonify({'error': 'No data provided'}), 400
             
+            # Prevent registration while already authenticated
+            current_user_id = get_optional_jwt_identity()
+            if current_user_id:
+                return jsonify({'error': 'Already logged in. Please log out before registering a new account.'}), 403
+
             # Validate required fields
             email = data.get('email', '').strip().lower()
             password = data.get('password', '')
@@ -242,9 +552,9 @@ def create_app(config_name='development'):
             if not all([email, password, first_name, last_name]):
                 return jsonify({'error': 'Missing required fields'}), 400
 
-            # Ensure no duplicate user
+            # Ensure no duplicate active user
             existing_user = User.query.filter_by(email=email).first()
-            if existing_user:
+            if existing_user and existing_user.is_active:
                 return jsonify({'error': 'Email already registered'}), 409
 
             # Waitlist registration if not allowed
@@ -304,7 +614,93 @@ def create_app(config_name='development'):
             if not any(c.isdigit() for c in password):
                 return jsonify({'error': 'Password must contain at least one digit'}), 400
             
-            # Create new user
+            # Use Supabase auth if configured
+            if app.config.get('USE_SUPABASE'):
+                supabase_client = get_supabase_client()
+
+                user_metadata = {
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'user_type': user_type,
+                    'phone': data.get('phone', ''),
+                    'location': data.get('location', ''),
+                    'business_name': data.get('business_name', ''),
+                    'farm_size': data.get('farm_size', ''),
+                    'newsletter': data.get('newsletter', True)
+                }
+
+                create_response = None
+                if os.getenv('SUPABASE_SERVICE_ROLE_KEY'):
+                    create_response = supabase_client.auth.admin.create_user({
+                        'email': email,
+                        'password': password,
+                        'email_confirm': True,
+                        'user_metadata': user_metadata
+                    })
+                else:
+                    create_response = supabase_client.auth.sign_up({
+                        'email': email,
+                        'password': password,
+                        'options': {
+                            'data': user_metadata
+                        }
+                    })
+
+                if getattr(create_response, 'error', None):
+                    return jsonify({'error': str(create_response.error)}), 400
+
+                login_response = supabase_client.auth.sign_in_with_password({
+                    'email': email,
+                    'password': password
+                })
+
+                if getattr(login_response, 'error', None):
+                    return jsonify({'error': str(login_response.error)}), 400
+
+                login_data = getattr(login_response, 'data', {}) or {}
+                session_data = login_data.get('session') or {}
+                user_data = login_data.get('user') or {}
+                access_token = session_data.get('access_token') or login_data.get('access_token')
+
+                email_service.send_registration_confirmation(
+                    email,
+                    first_name or email
+                )
+
+                return jsonify({
+                    'message': 'Registration successful',
+                    'token': access_token,
+                    'user': user_data,
+                    'waitlist_position': None
+                }), 201
+
+            # Local registration when Supabase is not enabled
+            if existing_user and not existing_user.is_active:
+                existing_user.first_name = first_name
+                existing_user.last_name = last_name
+                existing_user.phone = data.get('phone', '')
+                existing_user.user_type = user_type
+                existing_user.location = data.get('location', '')
+                existing_user.business_name = data.get('business_name', '')
+                existing_user.farm_size = data.get('farm_size', '')
+                existing_user.newsletter = data.get('newsletter', True)
+                existing_user.set_password(password)
+                db.session.commit()
+
+                code = generate_otp_code()
+                create_otp_record(email, code)
+                email_service.send_otp_code(
+                    email,
+                    first_name or email,
+                    code
+                )
+
+                return jsonify({
+                    'message': 'Verification code sent. Please check your email to complete registration.',
+                    'requires_verification': True,
+                    'email': email
+                }), 202
+
             user = User(
                 email=email,
                 first_name=first_name,
@@ -314,40 +710,80 @@ def create_app(config_name='development'):
                 location=data.get('location', ''),
                 business_name=data.get('business_name', ''),
                 farm_size=data.get('farm_size', ''),
-                newsletter=data.get('newsletter', True)
+                newsletter=data.get('newsletter', True),
+                is_active=False
             )
             user.set_password(password)
             
             db.session.add(user)
-            
-            # Update waitlist status if they were on it
-            waitlist_entry = Waitlist.query.filter_by(email=email).first()
-            if waitlist_entry:
-                waitlist_entry.status = 'registered'
-            
             db.session.commit()
-            
-            # Create JWT token
-            access_token = create_access_token(identity=user.id)
-            
-            # Send registration confirmation email
-            email_service.send_registration_confirmation(
+
+            code = generate_otp_code()
+            create_otp_record(email, code)
+            email_service.send_otp_code(
                 email,
-                first_name or user.email
+                first_name or email,
+                code
             )
 
             return jsonify({
-                'message': 'Registration successful',
-                'token': access_token,
-                'user': user.to_dict(),
-                'waitlist_position': None
-            }), 201
+                'message': 'Verification code sent. Please check your email to complete registration.',
+                'requires_verification': True,
+                'email': email
+            }), 202
             
         except Exception as e:
             logger.error(f"Error in register_user: {str(e)}")
             db.session.rollback()
             return jsonify({'error': 'Server error: ' + str(e)}), 500
     
+    @app.route('/api/auth/verify-otp', methods=['POST'])
+    def verify_otp():
+        """Verify user registration OTP code"""
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({'error': 'No data provided'}), 400
+
+            email = data.get('email', '').strip().lower()
+            code = data.get('code', '').strip()
+
+            if not email or not code:
+                return jsonify({'error': 'Email and verification code are required'}), 400
+
+            otp_record = EmailOTP.query.filter_by(email=email, code=code, used=False).order_by(EmailOTP.created_at.desc()).first()
+            if not otp_record:
+                return jsonify({'error': 'Invalid or expired verification code'}), 400
+
+            if otp_record.expires_at < datetime.utcnow():
+                return jsonify({'error': 'Verification code expired'}), 400
+
+            user = User.query.filter_by(email=email).first()
+            if not user:
+                return jsonify({'error': 'User not found'}), 404
+
+            if user.is_active:
+                return jsonify({'error': 'Account already verified'}), 400
+
+            user.is_active = True
+            otp_record.used = True
+
+            waitlist_entry = Waitlist.query.filter_by(email=email).first()
+            if waitlist_entry:
+                waitlist_entry.status = 'registered'
+
+            db.session.commit()
+
+            access_token = create_access_token(identity=user.id)
+            return jsonify({
+                'message': 'Verification successful',
+                'token': access_token,
+                'user': user.to_dict()
+            }), 200
+        except Exception as e:
+            logger.error(f"Error in verify_otp: {str(e)}")
+            db.session.rollback()
+            return jsonify({'error': 'Server error'}), 500
     
     @app.route('/api/auth/login', methods=['POST'])
     def login():
@@ -364,6 +800,35 @@ def create_app(config_name='development'):
             if not email or not password:
                 return jsonify({'error': 'Email and password are required'}), 400
             
+            # Use Supabase auth when enabled
+            if app.config.get('USE_SUPABASE'):
+                supabase_client = get_supabase_client()
+
+                login_response = supabase_client.auth.sign_in_with_password({
+                    'email': email,
+                    'password': password
+                })
+
+                # Debug: print response structure
+                logger.info(f"Supabase login response: {login_response}")
+                logger.info(f"Response type: {type(login_response)}")
+                if hasattr(login_response, '__dict__'):
+                    logger.info(f"Response dict: {login_response.__dict__}")
+
+                if getattr(login_response, 'error', None):
+                    return jsonify({'error': str(login_response.error)}), 401
+
+                login_data = getattr(login_response, 'data', {}) or {}
+                session_data = login_data.get('session') or {}
+                user_data = login_data.get('user') or {}
+                access_token = session_data.get('access_token') or login_data.get('access_token')
+
+                return jsonify({
+                    'message': 'Login successful',
+                    'token': access_token,
+                    'user': user_data
+                }), 200
+
             # Find user
             user = User.query.filter_by(email=email).first()
             

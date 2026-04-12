@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sign In</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        body { background: #f8fafb; color: #111; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .oauth-card { background: #fff; border-radius: 18px; box-shadow: 0 20px 60px rgba(25, 30, 40, 0.08); padding: 40px; width: min(520px, 90%); text-align: center; }
+        .oauth-card h1 { margin-bottom: 16px; font-size: 28px; }
+        .oauth-card p { line-height: 1.7; color: #556; }
+        .status { margin-top: 28px; padding: 18px 24px; border-radius: 14px; background: #eef7ff; color: #0b4d92; display: inline-flex; align-items: center; gap: 10px; }
+        .status.success { background: #eafaf1; color: #1f7a3d; }
+        .status.error { background: #ffecea; color: #a61f1f; }
+    </style>
+</head>
+<body>
+    <div class="oauth-card">
+        <h1>Signing in with Google</h1>
+        <p id="oauth-message">Please wait while we finish signing you in.</p>
+        <div id="status-box" class="status">⌛ Processing...</div>
+    </div>
+
+    <script>
+        const status = '{{ status }}';
+        const redirectUrl = '{{ redirect_url }}';
+        const token = '{{ token }}';
+        const user = {{ user|tojson }};
+        const message = '{{ message }}';
+
+        const messageEl = document.getElementById('oauth-message');
+        const statusBox = document.getElementById('status-box');
+
+        if (messageEl) {
+            messageEl.textContent = message || 'Please wait while we finish signing you in.';
+        }
+
+        if (statusBox) {
+            statusBox.textContent = status === 'authenticated' ? 'Success! Redirecting...' : status === 'waitlist' ? 'Waitlist pending. Redirecting...' : 'Processing...';
+            statusBox.classList.toggle('success', status === 'authenticated' || status === 'waitlist');
+            statusBox.classList.toggle('error', status !== 'authenticated' && status !== 'waitlist');
+        }
+
+        function redirectWithSession() {
+            if (status === 'authenticated' && token) {
+                localStorage.setItem('authToken', token);
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                localStorage.setItem('isLoggedIn', 'true');
+            }
+            if (status === 'waitlist') {
+                localStorage.setItem('authToken', '');
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                localStorage.setItem('isLoggedIn', 'false');
+            }
+
+            setTimeout(() => {
+                window.location.href = redirectUrl || '/waitlist.html';
+            }, 1200);
+        }
+
+        redirectWithSession();
+    </script>
+</body>
+</html>

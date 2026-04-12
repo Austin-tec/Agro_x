@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Supabase Test</title>
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+        const SUPABASE_URL = 'https://mnqfdjntfwjtemdrlcdu.supabase.co'
+        const SUPABASE_ANON_KEY = 'sb_publishable_a2LepX7nz2RzmjqyJLalLQ__9kY8D3P'
+
+        console.log('Testing Supabase connection...')
+        console.log('URL:', SUPABASE_URL)
+        console.log('Key:', SUPABASE_ANON_KEY)
+
+        try {
+            const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+            console.log('✅ Supabase client created successfully!')
+            console.log('Auth URL:', supabase.auth.url)
+
+            // Try to get session
+            supabase.auth.getSession().then(({ data, error }) => {
+                if (error) {
+                    console.log('❌ Auth error:', error)
+                } else {
+                    console.log('✅ Auth session:', data)
+                }
+            })
+
+        } catch (error) {
+            console.log('❌ Error creating client:', error)
+        }
+    </script>
+</head>
+<body>
+    <h1>Supabase Test</h1>
+    <p>Check the browser console for results.</p>
+</body>
+</html>

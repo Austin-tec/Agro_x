@@ -1,5 +1,21 @@
 // js/main.js
 
+// Access control for registered users
+function checkUserAccess() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const currentPath = window.location.pathname;
+
+    // If user is logged in and NOT on waitlist page, redirect to waitlist
+    if ((currentUser || isLoggedIn) && !currentPath.includes('waitlist.html')) {
+        console.log('Registered user detected, redirecting to waitlist...');
+        window.location.href = 'waitlist.html';
+        return false; // Prevent further execution
+    }
+
+    return true; // Allow access
+}
+
 // Toggle password visibility
 function setupPasswordToggle() {
     document.querySelectorAll('.toggle-password').forEach(button => {
@@ -97,6 +113,9 @@ function setupMobileNav() {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // Check user access first
+    if (!checkUserAccess()) return; // If access denied, stop execution
+
     setupPasswordToggle();
     setupSmoothScrolling();
     setupHeaderScroll();
