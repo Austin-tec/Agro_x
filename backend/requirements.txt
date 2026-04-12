@@ -8,8 +8,7 @@ Werkzeug==2.3.6
 SQLAlchemy==2.0.48
 Flask-Mail==0.9.1
 requests==2.33.1
-httpx==0.28.1
-httpcore==1.0.9
+httpx==0.24.1
 gunicorn==21.2.0
 psycopg2-binary==2.9.10
 supabase==2.0.0
