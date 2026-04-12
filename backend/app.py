@@ -24,7 +24,6 @@ if ROOT_DIR not in sys.path:
 from backend.config import config
 from backend.models import db, Waitlist, User, EmailOTP, LaunchSettings, Listing, Order, OrderItem, Cart, CartItem, Review
 from backend.email_service import email_service
-from backend.supabase_client import init_supabase, get_supabase_client
 from jinja2 import TemplateNotFound
 
 # Configure logging
@@ -114,8 +113,15 @@ def create_app(config_name='development'):
     app.config.from_object(config[config_name])
     configure_database(app)
 
+    def get_supabase_client_lazy():
+        from backend.supabase_client import get_supabase_client
+        return get_supabase_client()
+
+    get_supabase_client = get_supabase_client_lazy
+
     # Initialize Supabase when enabled
     if app.config.get('USE_SUPABASE'):
+        from backend.supabase_client import init_supabase
         init_supabase()
     
     # Initialize extensions
